@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Before rotating, immediately set the alpha to 0. -->
+    <rotate
+        android:fromDegrees="360"
+        android:toDegrees="0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:fillBefore="true"
+        android:fillAfter="true"
+        android:fillEnabled="true"
+        android:duration="1200" />
+</set>

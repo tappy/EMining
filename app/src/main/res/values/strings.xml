@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">KAT</string>
+    <string name="full_app_name">Knowledge Analysis Tool</string>
+    <string name="app_login">@string/app_name</string>
+
+    <string name="Login_User">@string/text_username</string>
+    <string name="Login_Pass">@string/text_password</string>
+    <string name="Login_Button">เข้าสู่ระบบ</string>
+
+    <string name="action_settings">ตั้งค่า</string>
+
+    <string name="upload">อัพโหลด</string>
+    <string name="update">อัพเดท</string>
+    <string name="updating">กำลังอัพเดทข้แมูล</string>
+
+
+    <string name="title_section1">จัดการข้อมูล</string>
+    <string name="title_section2">วิเคราะห์เหมืองข้อมูล</string>
+    <string name="title_section3">ข้อมูลผู้ใช้</string>
+
+    <string name="hello_blank_fragment">วิเคราะห์เหมืองข้อมูล</string>
+    <string name="title_activity_register">RegisterAct</string>
+
+    <string name="register_btn">สมัครสมาชิก</string>
+    <string name="register_confirm_btn">บันทึก</string>
+
+    <string name="save_btn">บันทึก</string>
+    <string name="log_out">ออกจากระบบ</string>
+
+    <!-- list text -->
+    <string name="list_id_list">ID:</string>
+    <string name="list_table_name">Table name:</string>
+    <string name="list_permission">Permission:</string>
+    <!-- end list text -->
+
+    <string name="login_invalid_alert_text">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครัง!!</string>
+    <string name="input_invalid_alert_text">กรุณากรอกข้อมูลให้ถูกต้อง!!</string>
+    <string name="input_text_length_alert_text">ชื่อผู้ใช้และรหัสผ่านขั้นต่ำ 6 ตัวอักษร</string>
+    <string name="input_email_alert_text">กรุณากรอกอีเมลให้ถูกต้อง</string>
+    <string name="input_email_alert">กรุณากรอกอีเมลของคุณ</string>
+
+    <!-- view model fragment -->
+    <string name="model_manager_title_1">รูปแบบและการประเมินผล</string>
+    <string name="algorithm_kmeans">SimpleKMeans</string>
+    <string name="algorithm_tree">Decision tree ( J48 )</string>
+    <string name="algorithm_apriori">Apriori</string>
+
+    <!-- close view model fragment -->
+
+    <string name="replacemissing">Replace missing value</string>
+    <string name="maxiteration">Max iteration</string>
+    <string name="seed">Seed</string>
+    <string name="num_cluster">Cluster</string>
+
+    <!-- Dialog -->
+    <string name="upload_dialog">กำลังอัพโหลดไฟล์</string>
+    <string name="processing">กำลังประมวลผล</string>
+    <string name="upload_success">อัพโหลดสำเร็จ</string>
+    <string name="upload_failed">อัพโหลดล้มเหลว</string>
+    <string name="select_file_upload">เลือกไฟล์นามสกุล .csv หรือ .arff ที่ต้องการอัพโหลด</string>
+    <string name="delete_file">ลบไฟล์</string>
+    <string name="missing">ผิดพลาด</string>
+    <string name="del_failed">ลบข้อมูลล้มเหลว กรุณาลองอีกครั้ง</string>
+    <string name="update_dialog">คุณต้องการอัพเดทข้อมูลใช่หรือไม่</string>
+    <string name="update_failed">การอัพเดทข้อมูลล้มเหลว</string>
+    <string name="update_success">การอัพเดทข้อมูลสำเร็จ</string>
+    <string name="select_file_update">เลือกไฟล์นามสกุล .csv หรือ .arff ที่ต้องการอัพเดทข้อมูล</string>
+    <string name="please_wait">กรุณารอสักครู่</string>
+
+    <!-- เครือข่าย -->
+    <string name="network">เครือข่าย</string>
+    <string name="check_network">กรุณาตรวจสอบการเชื่อมต่อเครือข่าย</string>
+    <!--  -->
+
+
+    <!-- Apriori_  -->
+    <string name="Apriori_1classindex">Class index</string>
+    <string name="Apriori_2delta">Delta</string>
+    <string name="Apriori_3lowerBoundMinSupport">Lower bound min support</string>
+    <string name="Apriori_4minMetric">Min metric</string>
+    <string name="Apriori_5numRules">Number of rules</string>
+    <string name="Apriori_6significanceLevel">Significance level</string>
+    <string name="Apriori_7upperBoundMinSupport">Upper bound min support</string>
+
+    <!-- Tree -->
+    <string name="tree_1binarySplit">Binary split</string>
+    <string name="tree_2confidenceFactor">Confidence factor</string>
+    <string name="tree_3debug">Debug</string>
+    <string name="tree_4minNumObj">Min Number Object</string>
+    <string name="tree_5numFolds">Num folds</string>
+    <string name="tree_6reduceErrorPruning">Reduce error pruning</string>
+    <string name="tree_7saveInstanceData">Save instance data</string>
+    <string name="tree_8seed">Seed</string>
+    <string name="tree_9subTreeRaising">Sub tree raising</string>
+    <string name="tree_10unpruned">Unpruned</string>
+    <string name="tree_11useLaplace">Use laplace</string>
+
+
+    <!-- button -->
+    <string name="closeBtn">ปิด</string>
+    <string name="cancelBtn">ยกเลิก</string>
+    <string name="okBtn">ตกลง</string>
+    <string name="AnaBtnVal">AnaBtnVal</string>
+    <!--  -->
+    <string name="title_activity_cluster_model_view">การจัดกลุ่ม (SimpleKMeans)</string>
+    <string name="title_activity_tree_model_view">ต้นไม้ตัดสินใจ (J48)</string>
+    <string name="title_activity_apriori_model_view">กฎความสัมพันธ์ (Apriori)</string>
+
+
+    <string name="file_count">จำนวนไฟล์</string>
+    <string name="table_name">ชื่อตาราง</string>
+    <string name="file_name">ชื่อไฟล์</string>
+
+    <string name="user_account">ข้อมูลผู้ใช้</string>
+    <string name="edit">แก้ไข</string>
+
+    <string name="text_email">อีเมล</string>
+    <string name="text_username">ชื่อผู้ใช้</string>
+    <string name="text_password">รหัสผ่าน</string>
+
+    <string name="title_edit_email">แก้ไขอีเมล</string>
+    <string name="new_email">อีเมลใหม่</string>
+
+    <string name="title_edit_username">แก้ไขชื่อผู้ใช้</string>
+    <string name="new_username">ชื่อผู้ใช้ใหม่</string>
+
+
+    <string name="title_edit_password">แก้ไขรหัสผ่าน</string>
+    <string name="old_password">รหัสผ่านเดิม</string>
+    <string name="new_password">รหัสผ่านใหม่</string>
+    <string name="confirm_new_password">ยืนยันรหัสผ่านใหม่</string>
+
+    <string name="text_dialog_conf_pass">รหัสผ่านไม่ตรงกันกรุณายืนยันรหัสผ่านใหม่</string>
+
+    <string name="res_regis_succ">สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบเพื่อใช้งาน</string>
+    <string name="res_regis_exist">ไม่สามารถใช้งานชื่อผู้ใช้นี้ได้ กรุณาใช้ชื่อผู้ใช้อื่นแล้วลองใหม่อีกครั้ง</string>
+    <string name="res_regis_email_exist">ไม่สามารถใช้งานเมลนี้ได้ กรุณาใช้อีเมลอื่นแล้วลองใหม่อีกครั้ง</string>
+    <string name="res_regis_user_and_email_exist">ไม่สามารถใช้งานชื่อผู้ใช้และอีเมล์นี้ได้ กรุณาใช้ชื่อผู้ใช้และอีเมล์อื่นแล้วลองใหม่อีกครั้ง</string>
+    <string name="res_regis_err">สมัครสมาชิกล้มเหลว กรุณาลองใหม่อีกครั้ง</string>
+
+    <string name="powered_by">Powered by Weka</string>
+
+    <string name="lose_pass">ลืมรหัสผ่าน</string>
+
+    <string name="send_email">ส่งอีเมล</string>
+
+    <string name="send_email_suc">ส่งอีเมลสำเร็จ กรุณาตรวจสอบกล่องข้อความเข้า</string>
+
+    <string name="file_not_sup">ข้อมูลไม่รองรับการวิเคราะห์เหมืองข้อมูลด้วยอัลกอริทึม</string>
+
+    <string name="ana_err">การวิเคราะห์เหมืองข้อมูลล้มเหลว</string>
+
+    <string name="confirm">ยืนยัน</string>
+
+    <string name="conf_logO_text">คุณต้องการออกจากระบบใช่หรือไม่</string>
+
+    <string name="alert">แจ้งเตือน</string>
+
+    <string name="lose_pass_cont">ระบบจะส่งรหัสผ่านใหม่ให้ผ่านทางอีเมลของคุณ</string>
+
+    <string name="sending_password_to_email">กรุณารอสักครู่ กำลังส่งระหัสผ่านใหม่ให้ทางอีเมลของคุณ</string>
+
+    <string name="email_not_found">ไม่พบอีเมลนี้ในระบบ กรุณาตรวจสอบอีเมลและลองใหม่อีกครั้ง</string>
+
+    <string name="send_email_secc">ชื่อผู้ใช้และรหัสผ่านใหม่ถูกส่งไปทางอีเมลของคุณแล้ว</string>
+
+    <string name="send_email_failed">การส่งอีเมลล้มเหลว กรุณาลองใหม่อีกครั้ง</string>
+
+    <string name="system_error">ระบบขัดข้องกรุณาลองใหม่ภายหลัง</string>
+
+    <string name="fileType_notSupport">ไฟล์ที่ท่านเลือกไม่รองรับการวิเคราะห์เหมืองข้อมูล กรุณาเลือกไฟล์นามสกุล .csv หรือ .arff เท่านั้น</string>
+
+    <string name="title_activity_requesting_file">KAT Upload</string>
+
+    <string name="pls_ent_file_name">กรุณากรอกชื่อไฟล์</string>
+
+    <string name="set_file_name">ตั้งชื่อไฟล์</string>
+
+
+</resources>

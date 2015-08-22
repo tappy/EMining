@@ -1,0 +1,114 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.hackme.emining.RegisterAct"
+    android:background="@color/baseColor">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/relativeLayout"
+        android:gravity="center_horizontal"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center|center_horizontal">
+
+            <ImageView
+                android:layout_width="190dp"
+                android:layout_height="190dp"
+                android:id="@+id/imageView2"
+                android:src="@drawable/logo_new"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/register_btn"
+                android:id="@+id/list_table_name"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="@dimen/big_font"
+                android:textColor="@color/text_color"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:id="@+id/userEmail"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="10dp"
+                android:textSize="@dimen/normal_font"
+                android:hint="@string/text_email" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:id="@+id/userName"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="10dp"
+                android:textSize="@dimen/normal_font"
+                android:hint="@string/text_username" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:id="@+id/userPassword"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="10dp"
+                android:textSize="@dimen/normal_font"
+                android:hint="@string/text_password"
+                android:imeOptions="actionDone" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:layout_width="165dp"
+                    android:layout_height="40dp"
+                    android:text="@string/save_btn"
+                    android:id="@+id/save_button"
+                    android:background="@drawable/primarybutton"
+                    android:textColor="@color/text_color"
+                    android:textStyle="bold"
+                    android:onClick="saveAction"
+                    android:textSize="@dimen/small_font"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp" />
+
+                <Button
+                    android:layout_width="165dp"
+                    android:layout_height="40dp"
+                    android:text="@string/cancelBtn"
+                    android:id="@+id/button"
+                    android:textSize="@dimen/small_font"
+                    android:textColor="@color/text_color"
+                    android:background="@drawable/dangerbutton"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:onClick="cancelRegis"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

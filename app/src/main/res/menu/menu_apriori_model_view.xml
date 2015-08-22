@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.hackme.emining.Apriori_model_view">
+    <item
+        android:id="@+id/action_saveModel"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_social_share"
+        android:title="Save or share a model"
+        />
+    <item
+        android:id="@+id/action_saveModelFile"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_content_save"
+        android:title="Save or share a model"
+        />
+</menu>

@@ -1,0 +1,67 @@
+<resources>
+    <!-- value -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="list_vertical_margin">8dp</dimen>
+    <dimen name="list_horizontal_margin">8dp</dimen>
+    <dimen name="deviderHight">0dp</dimen>
+    <dimen name="max_width">300dp</dimen>
+    <!-- end value -->
+
+    <!-- font size -->
+    <dimen name="very_supper_small_font">12dp</dimen>
+    <dimen name="supper_small_font">14dp</dimen>
+    <dimen name="small_font">16dp</dimen>
+    <dimen name="normal_font">20dp</dimen>
+    <dimen name="big_font">30dp</dimen>
+    <dimen name="super_big_font">40dp</dimen>
+    <!-- end font size -->
+
+    <!-- padding  -->
+    <dimen name="padding_top">8dp</dimen>
+    <dimen name="padding_bottom">8dp</dimen>
+    <!-- -->
+
+    <!-- margin -->
+    <dimen name="margin_top">4dp</dimen>
+    <dimen name="margin_bottom">4dp</dimen>
+    <dimen name="margin_left">16dp</dimen>
+    <dimen name="margin_right">16dp</dimen>
+    <!-- -->
+
+    <!-- text editor -->
+    <dimen name="text_editor_max_width">@dimen/max_width</dimen>
+    <dimen name="button_max_width">@dimen/max_width</dimen>
+    <!-- exd text editor -->
+
+    <!-- color -->
+    <color name="baseColorMin">#ff00c2b4</color>
+    <color name="baseColor">#009688</color>
+    <color name="baseColorPlus">#ff00685a</color>
+
+    <color name="base_opa_color">#bb009688</color>
+
+    <color name="primarycolormin">#5c6bc0</color>
+    <color name="primarycolor">#3f51b5</color>
+    <color name="primarycolorplus">#283593</color>
+
+    <color name="dangercolormin">#dde83c0c</color>
+    <color name="dangercolor">#bf360c</color>
+    <color name="dangercolorplus">#ff9a360c</color>
+
+    <color name="actionBarColormin">@color/baseColorMin</color>
+    <color name="actionBarColor">@color/baseColor</color>
+    <color name="actionBarColorplus">@color/baseColorPlus</color>
+
+    <color name="tabbgmin">#fff5f5f5</color>
+    <color name="tabbg">#FFDFDFDF</color>
+    <color name="tabbgplus">#ffc6c6c6</color>
+
+    <color name="text_color">#ffffff</color>
+    <color name="text_color_reverse">#ff4c4c4c</color>
+
+    <color name="shadow_color">#69838383</color>
+
+    <!-- end color -->
+
+</resources>

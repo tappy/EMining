@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <item name="android:actionBarStyle">@style/ActionBarStyle</item>\
+    <item name="android:homeAsUpIndicator">@drawable/ic_action_hardware_keyboard_arrow_left</item>
+    <!--<item name="android:actionBarTabStyle">@style/MyActionBarTabs</item>-->
+    </style>
+
+    <style name="AppTheme_no_arrow" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>\
+        <!--<item name="android:actionBarTabStyle">@style/MyActionBarTabs</item>-->
+    </style>
+
+
+    <style name="ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+      <item name="android:background">@drawable/actionbar_color</item>
+    </style>
+
+<!--    &lt;!&ndash; ActionBar tabs styles &ndash;&gt;
+    <style name="MyActionBarTabs"
+        parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
+        &lt;!&ndash; tab indicator&ndash;&gt;
+        <item name="android:background">@color/baseColor</item>
+    </style>-->
+
+</resources>
