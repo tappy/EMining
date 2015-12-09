@@ -1,23 +1,22 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.WebServiceConfig;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -29,21 +28,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 
 
-public class requestingFile extends Activity {
+public class RequestFile extends Activity {
 
     private ProgressBar progressBar;
     private TextView tv32;
@@ -84,8 +74,8 @@ public class requestingFile extends Activity {
             String[] ftype = file.getName().split("\\.");
 
             if (ftype[(ftype.length - 1)].equals("arff") || ftype[(ftype.length - 1)].equals("csv")) {
-                if (new database_manager(getBaseContext()).existUser()) {
-                    new newUploadFile().execute(file.getPath(), new webServiceConfig().getHost("uploadFile.php"));
+                if (new DatabaseManager(getBaseContext()).existUser()) {
+                    new newUploadFile().execute(file.getPath(), new WebServiceConfig().getHost("uploadFile.php"));
                 } else {
                     Intent login = new Intent(getBaseContext(), LoginActivity.class);
                     startActivity(login);
@@ -94,7 +84,7 @@ public class requestingFile extends Activity {
                 tv32.setText("ไฟล์ไม่รองรับ");
                 //Toast.makeText(getBaseContext(), "ไฟล์ไม่รองรับ", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(getBaseContext(), "อัพโหลดไม่สำเร็จ", Toast.LENGTH_LONG).show();
-                AlertDialog adl=new AlertDialog.Builder(requestingFile.this)
+                AlertDialog adl = new AlertDialog.Builder(RequestFile.this)
                         .setTitle("อัพโหลดไม่สำเร็จ")
                         .setMessage("ไฟล์ไม่รองรับ อัพโหลดไม่สำเร็จ")
                         .setCancelable(true)
@@ -110,7 +100,7 @@ public class requestingFile extends Activity {
         } else {
             tv32.setText("อัพโหลดไม่สำเร็จ");
             Toast.makeText(getBaseContext(), "อัพโหลดไม่สำเร็จ", Toast.LENGTH_LONG).show();
-            AlertDialog adl=new AlertDialog.Builder(requestingFile.this)
+            AlertDialog adl = new AlertDialog.Builder(RequestFile.this)
                     .setTitle("อัพโหลดไม่สำเร็จ")
                     .setMessage("การอัพโหลดไม่สำเร็จ")
                     .setCancelable(true)
@@ -129,8 +119,8 @@ public class requestingFile extends Activity {
         Uri fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (fileUri != null) {
             File file = new File(getRealPathFromURI(fileUri));
-            if (new database_manager(getBaseContext()).existUser()) {
-                new newUploadFile().execute(file.getPath(), new webServiceConfig().getHost("uploadFile.php"));
+            if (new DatabaseManager(getBaseContext()).existUser()) {
+                new newUploadFile().execute(file.getPath(), new WebServiceConfig().getHost("uploadFile.php"));
             } else {
                 Intent login = new Intent(getBaseContext(), LoginActivity.class);
                 startActivity(login);
@@ -171,7 +161,7 @@ public class requestingFile extends Activity {
                 String serverURL = params[1];
                 File file = new File(fileName);
                 FileBody fb = new FileBody(file);
-                StringBody user = new StringBody(new database_manager(getBaseContext()).getLoginId());
+                StringBody user = new StringBody(new DatabaseManager(getBaseContext()).getLoginId());
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost(serverURL);
 
@@ -201,14 +191,14 @@ public class requestingFile extends Activity {
                 if (jso.getInt("StatusID") == 1) {
                     tv32.setText("อัพโหลดสำเร็จ");
                     //Toast.makeText(getBaseContext(), "อัพโหลดสำเร็จ", Toast.LENGTH_LONG).show();
-                    AlertDialog adl=new AlertDialog.Builder(requestingFile.this)
+                    AlertDialog adl = new AlertDialog.Builder(RequestFile.this)
                             .setTitle("อัพโหลดสำเร็จ")
                             .setMessage("การอัพโหลดสำเร็จแล้ว")
                             .setCancelable(true)
                             .setNegativeButton("วิเคราะห์เหมืองข้อมูล",new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Intent in=new Intent(requestingFile.this,MainPage.class);
+                                    Intent in = new Intent(RequestFile.this, MainPage.class);
                                     in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(in);
                                 }
@@ -225,7 +215,7 @@ public class requestingFile extends Activity {
                 } else {
                     tv32.setText("อัพโหลดไม่สำเร็จ");
                     Toast.makeText(getBaseContext(), "อัพโหลดไม่สำเร็จ", Toast.LENGTH_LONG).show();
-                    AlertDialog adl=new AlertDialog.Builder(requestingFile.this)
+                    AlertDialog adl = new AlertDialog.Builder(RequestFile.this)
                             .setTitle("อัพโหลดไม่สำเร็จ")
                             .setMessage("การอัพโหลดไม่สำเร็จ")
                             .setCancelable(true)

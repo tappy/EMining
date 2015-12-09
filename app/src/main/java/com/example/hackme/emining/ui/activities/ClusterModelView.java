@@ -1,27 +1,22 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.view.ViewPager;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ShareActionProvider;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.ui.fragments.ClusterBodyFragment;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.ui.fragments.HeadClusterFragment;
+import com.example.hackme.emining.Summary;
+import com.example.hackme.emining.WebServiceConfig;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -31,21 +26,14 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-public class cluster_model_view extends Activity implements ActionBar.TabListener {
+public class ClusterModelView extends Activity implements ActionBar.TabListener {
 
     private ClusterPagerAdapter pageAdapter;
     private ViewPager mViewPager;
@@ -121,7 +109,7 @@ public class cluster_model_view extends Activity implements ActionBar.TabListene
                 try {
                     StringBuilder builder = new StringBuilder();
                     HttpClient client = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(new webServiceConfig().getHost("getClusterModel.php"));
+                    HttpPost post = new HttpPost(new WebServiceConfig().getHost("getClusterModel.php"));
                     List<NameValuePair> list = new ArrayList<NameValuePair>();
                     list.add(new BasicNameValuePair("getParam",params[0]));
                     list.add(new BasicNameValuePair("userid", params[1]));
@@ -161,7 +149,7 @@ public class cluster_model_view extends Activity implements ActionBar.TabListene
                 }
             }
 
-        }.execute("full_data",new database_manager(getBaseContext()).getLoginId());
+        }.execute("full_data", new DatabaseManager(getBaseContext()).getLoginId());
     }
 
     public void loadClusterContentforSave() {
@@ -172,7 +160,7 @@ public class cluster_model_view extends Activity implements ActionBar.TabListene
                 try {
                     StringBuilder builder = new StringBuilder();
                     HttpClient client = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(new webServiceConfig().getHost("getClusterModel.php"));
+                    HttpPost post = new HttpPost(new WebServiceConfig().getHost("getClusterModel.php"));
                     List<NameValuePair> list = new ArrayList<NameValuePair>();
                     list.add(new BasicNameValuePair("getParam",params[0]));
                     list.add(new BasicNameValuePair("userid", params[1]));
@@ -202,13 +190,13 @@ public class cluster_model_view extends Activity implements ActionBar.TabListene
                     for (int i = 0; i < jsModel.length()-1; i++) {
                         val += jsModel.getString(i);
                     }
-                    new saveModelFile(cluster_model_view.this,val).setFileName(0);
+                    new SaveModelFile(ClusterModelView.this, val).setFileName(0);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
 
-        }.execute("full_data",new database_manager(getBaseContext()).getLoginId());
+        }.execute("full_data", new DatabaseManager(getBaseContext()).getLoginId());
     }
 
 
@@ -262,13 +250,13 @@ public class cluster_model_view extends Activity implements ActionBar.TabListene
 
             switch (position) {
                 case 0:
-                    return headCluster.newInstance();
+                    return HeadClusterFragment.newInstance();
                 case 1:
-                    return summary.newInstance();
+                    return Summary.newInstance();
                 case 2:
-                    return clusterBody.newInstance("body", 1);
+                    return ClusterBodyFragment.newInstance("body", 1);
                 default:
-                    return clusterBody.newInstance("body", position - 1);
+                    return ClusterBodyFragment.newInstance("body", position - 1);
             }
         }
 

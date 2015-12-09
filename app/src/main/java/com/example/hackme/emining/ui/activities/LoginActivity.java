@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +17,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.WebServiceConfig;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -53,7 +57,7 @@ public class LoginActivity extends Activity {
         getActionBar().hide();
 
 
-        if(new database_manager(getBaseContext()).existUser()){
+        if (new DatabaseManager(getBaseContext()).existUser()) {
             Intent red=new Intent(getBaseContext(),MainPage.class);
             startActivity(red);
         }
@@ -111,7 +115,7 @@ public class LoginActivity extends Activity {
                 Log.d("do in background", "do in background");
                 StringBuilder builder = new StringBuilder();
                 HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(new webServiceConfig().getHost("resetPassword.php"));
+                HttpPost post = new HttpPost(new WebServiceConfig().getHost("resetPassword.php"));
                 List<NameValuePair> list = new ArrayList();
                 list.add(new BasicNameValuePair("Email", params[0]));
                 post.setEntity(new UrlEncodedFormEntity(list));
@@ -232,7 +236,7 @@ public class LoginActivity extends Activity {
     }
 
     public void registerAction(View v) {
-        Intent regisIntent = new Intent(this, RegisterAct.class);
+        Intent regisIntent = new Intent(this, RegisterActivity.class);
         startActivity(regisIntent);
     }
 
@@ -269,7 +273,7 @@ public class LoginActivity extends Activity {
             try {
                 String data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8") + "&";
                 data += URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(params[1], "UTF-8");
-                URL url = new URL(new webServiceConfig().getHost("checkUser.php"));
+                URL url = new URL(new WebServiceConfig().getHost("checkUser.php"));
                 URLConnection conn = url.openConnection();
                 conn.setDoOutput(true);
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
@@ -298,7 +302,7 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(JSONObject jsonObject) {
             removeDialog(0);
             try {
-                database_manager db = new database_manager(getBaseContext());
+                DatabaseManager db = new DatabaseManager(getBaseContext());
                 db.getWritableDatabase();
                 if (jsonObject.getBoolean("stulog")) {
                     db.saveSession(jsonObject.getString("username"), jsonObject.getString("id"), jsonObject.getString("email"));

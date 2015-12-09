@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.fragments;
 
 
 import android.os.AsyncTask;
@@ -10,7 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.WebServiceConfig;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -28,19 +31,19 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class apriori_body_frag extends Fragment {
+public class AprioriBodyFragment extends Fragment {
 
     private View rootview;
     private ListView listView;
     private SimpleAdapter adapter;
     private ArrayList arrayList;
 
-    public static apriori_body_frag newInstance() {
-        apriori_body_frag fragment = new apriori_body_frag();
+    public static AprioriBodyFragment newInstance() {
+        AprioriBodyFragment fragment = new AprioriBodyFragment();
         return fragment;
     }
 
-    public apriori_body_frag() {
+    public AprioriBodyFragment() {
 
     }
 
@@ -58,7 +61,7 @@ public class apriori_body_frag extends Fragment {
 
         listView=(ListView)rootview.findViewById(R.id.apriori_body_listview);
 
-        new loadSummary().execute(new database_manager(rootview.getContext()).getLoginId(),"body");
+        new loadSummary().execute(new DatabaseManager(rootview.getContext()).getLoginId(), "body");
 
         return rootview;
     }
@@ -74,7 +77,7 @@ public class apriori_body_frag extends Fragment {
             try {
                 StringBuilder builder = new StringBuilder();
                 HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(new webServiceConfig().getHost("getAprioryModel.php"));
+                HttpPost post = new HttpPost(new WebServiceConfig().getHost("getAprioryModel.php"));
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
                 list.add(new BasicNameValuePair("userid", params[0]));
                 list.add(new BasicNameValuePair("param", params[1]));

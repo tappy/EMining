@@ -3,9 +3,9 @@ package com.example.hackme.emining;
 import android.app.AlertDialog;
 import android.content.Context;
 
-public class simpleDialog extends AlertDialog.Builder {
+public class SimpleDialog extends AlertDialog.Builder {
 
-    public simpleDialog(Context context,String title,String message) {
+    public SimpleDialog(Context context, String title, String message) {
         super(context);
         setTitle(title);
         setMessage(message);

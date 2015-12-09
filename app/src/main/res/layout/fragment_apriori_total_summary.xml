@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.hackme.emining.apriori_total_summary"
+    tools:context=".ui.fragments.AprioriTotalSummaryFragment"
     android:background="#ffffffff">
 
     <!-- TODO: Update blank fragment layout -->

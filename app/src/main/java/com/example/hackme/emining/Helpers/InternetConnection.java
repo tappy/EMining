@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.Helpers;
 
 
 import android.content.Context;

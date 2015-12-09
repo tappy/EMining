@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.model;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class database_manager extends SQLiteOpenHelper {
+import com.example.hackme.emining.ui.activities.LoginActivity;
+
+public class DatabaseManager extends SQLiteOpenHelper {
     private static final String DBNAME = "EMining";
     //private static final String TABLEMODEL = "model_table";
     private static final String TABLELOGIN = "login_table";
@@ -16,7 +18,7 @@ public class database_manager extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     private Context context;
 
-    public database_manager(Context context) {
+    public DatabaseManager(Context context) {
         super(context, DBNAME, null, VERSION);
         this.context = context;
     }

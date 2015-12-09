@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.model;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -28,6 +28,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hackme.emining.Helpers.InternetConnection;
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.WebServiceConfig;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -51,10 +55,10 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class datamanager extends Fragment {
+public class DataManager extends Fragment {
 
     private final int FILE_SELECT_CODE = 0;
-    private database_manager dbms;
+    private DatabaseManager dbms;
     private ListView datamanagerlistview;
     int fir = 0, las = 0;
     private View rootView;
@@ -73,12 +77,12 @@ public class datamanager extends Fragment {
     private ArrayList as;
     private AlertDialog dlg;
 
-    public static datamanager newInstance() {
-        datamanager data_fragment = new datamanager();
+    public static DataManager newInstance() {
+        DataManager data_fragment = new DataManager();
         return data_fragment;
     }
 
-    public datamanager() {
+    public DataManager() {
         // Required empty public constructor
     }
 
@@ -92,7 +96,7 @@ public class datamanager extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_data_manager_page, container, false);
-        dbms = new database_manager(getActivity().getBaseContext());
+        dbms = new DatabaseManager(getActivity().getBaseContext());
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         imgbtn = (ImageButton) rootView.findViewById(R.id.refreshData);
         refnim = AnimationUtils.loadAnimation(rootView.getContext(), R.anim.rotate_view);
@@ -100,7 +104,7 @@ public class datamanager extends Fragment {
         imgbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new loadData().execute(new database_manager(rootView.getContext()).getLoginId());
+                new loadData().execute(new DatabaseManager(rootView.getContext()).getLoginId());
             }
         });
         uploadFile = (ImageButton) rootView.findViewById(R.id.uploadBtn);
@@ -250,7 +254,7 @@ public class datamanager extends Fragment {
                                 StringBuilder stringBuilder = new StringBuilder();
                                 try {
                                     HttpClient client = new DefaultHttpClient();
-                                    HttpPost httpPost = new HttpPost(new webServiceConfig().getHost("loadFileName.php"));
+                                    HttpPost httpPost = new HttpPost(new WebServiceConfig().getHost("loadFileName.php"));
                                     List<NameValuePair> params1 = new ArrayList<>();
                                     params1.add(new BasicNameValuePair("userID", params[0]));
                                     params1.add(new BasicNameValuePair("tableName", params[1]));
@@ -295,7 +299,7 @@ public class datamanager extends Fragment {
                                     ex.printStackTrace();
                                 }
                             }
-                        }.execute(new database_manager(rootView.getContext()).getLoginId(), updateHm.get("table_name").toString());
+                        }.execute(new DatabaseManager(rootView.getContext()).getLoginId(), updateHm.get("table_name").toString());
                     }
                 });
 
@@ -357,7 +361,7 @@ public class datamanager extends Fragment {
                                     StringBuilder builder = new StringBuilder();
                                     try {
                                         HttpClient client = new DefaultHttpClient();
-                                        HttpPost httpPost = new HttpPost(new webServiceConfig().getHost("deleteUploadList.php"));
+                                        HttpPost httpPost = new HttpPost(new WebServiceConfig().getHost("deleteUploadList.php"));
                                         List<NameValuePair> params1 = new ArrayList<>();
                                         params1.add(new BasicNameValuePair("id_upload", params[0]));
                                         params1.add(new BasicNameValuePair("uploadTable", params[1]));
@@ -388,7 +392,7 @@ public class datamanager extends Fragment {
                                         if (jsonObject.getInt("status") == 1) {
                                             as.remove(position);
                                             listA.notifyDataSetChanged();
-                                            new loadData().execute(new database_manager(rootView.getContext()).getLoginId());
+                                            new loadData().execute(new DatabaseManager(rootView.getContext()).getLoginId());
                                             if (jsonObject.getInt("drop") == 1) {//Toast.makeText(view1.getContext(), "drop=" + jsonObject.getInt("drop"), Toast.LENGTH_SHORT).show();
                                                 dlg.dismiss();
                                             }
@@ -399,7 +403,7 @@ public class datamanager extends Fragment {
                                         e.printStackTrace();
                                     }
                                 }
-                            }.execute(hm.get("id_upload").toString(), updateHm.get("table_name").toString(), hm.get("file_name").toString(), new database_manager(rootView.getContext()).getLoginId().toString());
+                            }.execute(hm.get("id_upload").toString(), updateHm.get("table_name").toString(), hm.get("file_name").toString(), new DatabaseManager(rootView.getContext()).getLoginId().toString());
                         }
                     });
                     aBuilder.setPositiveButton(getString(R.string.cancelBtn), new DialogInterface.OnClickListener() {
@@ -429,7 +433,7 @@ public class datamanager extends Fragment {
             StringBuilder stringBuilder = new StringBuilder();
             try {
                 HttpClient client = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(new webServiceConfig().getHost("loadListTable.php"));
+                HttpPost httpPost = new HttpPost(new WebServiceConfig().getHost("loadListTable.php"));
                 List<NameValuePair> params1 = new ArrayList<>();
                 params1.add(new BasicNameValuePair("userID", params[0]));
                 httpPost.setEntity(new UrlEncodedFormEntity(params1));
@@ -472,12 +476,12 @@ public class datamanager extends Fragment {
 
                         if (typ.equals("csv") || typ.equals("arff")) {
                             if (stuUpdate) {
-                                new newUpdateFile().execute(file.getPath(), new webServiceConfig().getHost("updateTable.php"), updateHm.get("table_name").toString());
+                                new newUpdateFile().execute(file.getPath(), new WebServiceConfig().getHost("updateTable.php"), updateHm.get("table_name").toString());
                             } else {
-                                new myNewUploadFile().execute(file.getPath(), new webServiceConfig().getHost("uploadFile.php"));
+                                new myNewUploadFile().execute(file.getPath(), new WebServiceConfig().getHost("uploadFile.php"));
                             }
 
-                        }else {
+                        } else {
                             AlertDialog.Builder a = new AlertDialog.Builder(rootView.getContext());
                             a.setTitle(getString(R.string.alert));
                             a.setIcon(android.R.drawable.ic_dialog_alert);
@@ -553,6 +557,7 @@ public class datamanager extends Fragment {
                 return null;
             }
         }
+
         @Override
         protected void onProgressUpdate(String... values) {
             progressDialog.setMessage(values[0]);
@@ -562,6 +567,7 @@ public class datamanager extends Fragment {
                 progressDialog.setIcon(android.R.drawable.ic_delete);
             }
         }
+
         @Override
         protected void onPostExecute(String s) {
             try {
@@ -588,6 +594,7 @@ public class datamanager extends Fragment {
             progressDialog = ProgressDialog.show(rootView.getContext(), getString(R.string.update), getString(R.string.upload_dialog), false, true);
             progressDialog.setIcon(android.R.drawable.stat_sys_upload);
         }
+
         @Override
         protected String doInBackground(String... params) {
             try {
@@ -604,7 +611,7 @@ public class datamanager extends Fragment {
                 MultipartEntity reqEntity = new MultipartEntity();
                 reqEntity.addPart("filUpload", fb);
                 reqEntity.addPart("userID", user);
-                reqEntity.addPart("tableName",tableNameBody);
+                reqEntity.addPart("tableName", tableNameBody);
                 post.setEntity(reqEntity);
                 HttpResponse response = client.execute(post);
                 BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));

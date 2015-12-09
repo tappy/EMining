@@ -64,7 +64,7 @@ MERGED from com.android.support:support-v4:21.0.3:16:5
 		ADDED from AndroidManifest.xml:16:9
 	android:theme
 		ADDED from AndroidManifest.xml:18:9
-activity#com.example.hackme.emining.MainPage
+activity#com.example.hackme.emining.ui.activities.MainPage
 ADDED from AndroidManifest.xml:19:9
 	android:label
 		ADDED from AndroidManifest.xml:21:13
@@ -80,7 +80,7 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:25:17
 	android:name
 		ADDED from AndroidManifest.xml:25:27
-activity#com.example.hackme.emining.LoginActivity
+activity#com.example.hackme.emining.ui.activities.LoginActivity
 ADDED from AndroidManifest.xml:28:9
 	android:label
 		ADDED from AndroidManifest.xml:30:13

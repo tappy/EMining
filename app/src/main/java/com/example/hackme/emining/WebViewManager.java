@@ -2,12 +2,12 @@ package com.example.hackme.emining;
 
 import android.view.View;
 
-public class webView_manager {
+public class WebViewManager {
 
     private String csscontent;
     private View rootView;
 
-    webView_manager(View mview){
+        public WebViewManager(View mview) {
         rootView=mview;
         csscontent="<style>" +
                 "    table{" +

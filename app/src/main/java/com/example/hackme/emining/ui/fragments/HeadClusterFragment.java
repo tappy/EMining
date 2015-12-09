@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +10,11 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.WebServiceConfig;
+import com.example.hackme.emining.WebViewManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,17 +30,17 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class headCluster extends Fragment {
+public class HeadClusterFragment extends Fragment {
     private View rootView;
     private WebView cluster_head_web;
     private String webData;
 
-    public static headCluster newInstance() {
-        headCluster fragment = new headCluster();
+    public static HeadClusterFragment newInstance() {
+        HeadClusterFragment fragment = new HeadClusterFragment();
         return fragment;
     }
 
-    public headCluster() {
+    public HeadClusterFragment() {
         // Required empty public constructor
     }
 
@@ -71,7 +76,7 @@ public class headCluster extends Fragment {
                 try {
                     StringBuilder builder = new StringBuilder();
                     HttpClient client = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(new webServiceConfig().getHost("getClusterModel.php"));
+                    HttpPost post = new HttpPost(new WebServiceConfig().getHost("getClusterModel.php"));
                     List<NameValuePair> list = new ArrayList<NameValuePair>();
                     list.add(new BasicNameValuePair("getParam", params[0]));
                     list.add(new BasicNameValuePair("userid", params[1]));
@@ -101,7 +106,7 @@ public class headCluster extends Fragment {
                 try {
                     JSONArray js = new JSONArray(s[0]);
                     if (s[1] == "head") {
-                        webData = "<!Doctype html><head>"+new webView_manager(rootView).getCSS()+"</head>" +
+                        webData = "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head>" +
                                 "<body><table widht='100%' border=0>";
                         for (int i = 0; i < js.length(); i++) {
                             webData += "<tr>";
@@ -140,7 +145,7 @@ public class headCluster extends Fragment {
                 }
             }
 
-        }.execute(loadParam, new database_manager(rootView.getContext()).getLoginId());
+        }.execute(loadParam, new DatabaseManager(rootView.getContext()).getLoginId());
 
     }
 

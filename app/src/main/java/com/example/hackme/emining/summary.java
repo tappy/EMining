@@ -11,6 +11,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.example.hackme.emining.model.DatabaseManager;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -25,19 +27,19 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class summary extends Fragment {
+public class Summary extends Fragment {
 
     private View rootView;
     private WebView webView;
     private String data = "";
     private ProgressBar cluster_process;
 
-    public static summary newInstance() {
-        summary fragment = new summary();
+    public static Summary newInstance() {
+        Summary fragment = new Summary();
         return fragment;
     }
 
-    public summary() {
+    public Summary() {
         // Required empty public constructor
     }
 
@@ -73,7 +75,7 @@ public class summary extends Fragment {
                 try {
                     StringBuilder builder = new StringBuilder();
                     HttpClient client = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(new webServiceConfig().getHost("getClusterModel.php"));
+                    HttpPost post = new HttpPost(new WebServiceConfig().getHost("getClusterModel.php"));
                     List<NameValuePair> list = new ArrayList<NameValuePair>();
                     list.add(new BasicNameValuePair("getParam", params[0]));
                     list.add(new BasicNameValuePair("userid", params[1]));
@@ -102,7 +104,7 @@ public class summary extends Fragment {
                 try {
                     JSONArray jsonArray = new JSONArray(s[0]);
                     if(s[1]=="head") {
-                        data+="<!Doctype html><head>"+new webView_manager(rootView).getCSS()+"</head><body><div class='summary div'>";
+                        data += "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head><body><div class='summary div'>";
                       int iteration = Integer.parseInt(jsonArray.getString(0).split(":")[1].trim());
                         data += "<div class='div m-top-1' >&nbsp&nbsp&nbsp&nbspจากผลการวิเคราะห์ข้อมูลด้วยวิธีการจัดกลุ่มโดยใช้อัลกอริทึม Simple KMeans ได้ค่าต่างๆตังนี้</div>" +
                                 "<div class='div draw_node m-top-1' > ค่า Number of iterations เท่ากับ";
@@ -125,6 +127,6 @@ public class summary extends Fragment {
                     ex.printStackTrace();
                 }
             }
-        }.execute(param, new database_manager(rootView.getContext()).getLoginId());
+        }.execute(param, new DatabaseManager(rootView.getContext()).getLoginId());
     }
 }

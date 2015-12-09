@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.activities;
 
 import android.app.Activity;
 import android.app.ActionBar;
@@ -22,6 +22,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.ViewModel;
+import com.example.hackme.emining.model.DataManager;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.ui.fragments.SettingFragment;
+
 import java.lang.reflect.Method;
 
 
@@ -30,16 +36,16 @@ public class MainPage extends Activity implements ActionBar.TabListener {
     public SectionsPagerAdapter mSectionsPagerAdapter;
     public ViewPager mViewPager;
     public static ProgressDialog progressDialog;
-    public database_manager dbms;
+    public DatabaseManager dbms;
     public int tabCelect = 0;
-    private database_manager dbm;
+    private DatabaseManager dbm;
     private AlertDialog.Builder al;
     private long back_pressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbms = new database_manager(getBaseContext());
+        dbms = new DatabaseManager(getBaseContext());
         dbms.getWritableDatabase();
         if (!dbms.existUser()) {
             Intent intent = new Intent(getBaseContext(), LoginActivity.class);
@@ -72,7 +78,7 @@ public class MainPage extends Activity implements ActionBar.TabListener {
                             .setTabListener(this));
         }
 
-        dbm = new database_manager(this);
+        dbm = new DatabaseManager(this);
         al = new AlertDialog.Builder(this);
         forceTabs();
     }
@@ -224,11 +230,11 @@ public class MainPage extends Activity implements ActionBar.TabListener {
 
             switch (position) {
                 case 0:
-                    return datamanager.newInstance();
+                    return DataManager.newInstance();
                 case 1:
                     return ViewModel.newInstance();
                 case 2:
-                    return settingFlag.newInstance();
+                    return SettingFragment.newInstance();
                 default:
                     return null;
             }

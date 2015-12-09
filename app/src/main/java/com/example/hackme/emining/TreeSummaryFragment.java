@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import com.example.hackme.emining.model.DatabaseManager;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -26,19 +28,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class tree_summary_frag extends Fragment {
+public class TreeSummaryFragment extends Fragment {
 
     private View rootview;
     private WebView webView;
     private String webData;
     private ProgressDialog tree_progressDialog;
 
-    public static tree_summary_frag newInstance() {
-        tree_summary_frag fragment = new tree_summary_frag();
+    public static TreeSummaryFragment newInstance() {
+        TreeSummaryFragment fragment = new TreeSummaryFragment();
         return fragment;
     }
 
-    public tree_summary_frag() {
+    public TreeSummaryFragment() {
         // Required empty public constructor
     }
 
@@ -53,7 +55,7 @@ public class tree_summary_frag extends Fragment {
                              Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_tree_summary_frag, container, false);
         webView = (WebView) rootview.findViewById(R.id.tree_summary_web_wiew);
-        new loadSummary().execute(new database_manager(rootview.getContext()).getLoginId(), "summary");
+        new loadSummary().execute(new DatabaseManager(rootview.getContext()).getLoginId(), "summary");
         return rootview;
     }
 
@@ -74,7 +76,7 @@ public class tree_summary_frag extends Fragment {
             try {
                 StringBuilder builder = new StringBuilder();
                 HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(new webServiceConfig().getHost("getTreeModel.php"));
+                HttpPost post = new HttpPost(new WebServiceConfig().getHost("getTreeModel.php"));
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
                 list.add(new BasicNameValuePair("userid", params[0]));
                 list.add(new BasicNameValuePair("param", params[1]));
@@ -100,7 +102,7 @@ public class tree_summary_frag extends Fragment {
         protected void onPostExecute(String s) {
             try {
                 JSONArray js = new JSONArray(s);
-                webData = "<!Doctype html><head>" + new webView_manager(rootview).getCSS() + "</head>" +
+                webData = "<!Doctype html><head>" + new WebViewManager(rootview).getCSS() + "</head>" +
                         "<body><table widht='100%' border=0>";
                 webData += getFirstSummary(js);
                 int seeCount = 0;

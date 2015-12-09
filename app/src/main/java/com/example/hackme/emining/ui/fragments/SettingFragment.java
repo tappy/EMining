@@ -1,8 +1,7 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.fragments;
 
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -14,8 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.WebServiceConfig;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -36,22 +38,22 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link settingFlag#newInstance} factory method to
+ * Use the {@link SettingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class settingFlag extends Fragment {
+public class SettingFragment extends Fragment {
 
     private ImageButton imgbtn1, imgbtn2, imgbtn3;
     private View rooView, nodeView1, nodeView2, nodeView3;
     private EditText emailEdit, userNameEdit, passwordEdit;
-    private database_manager dbms;
+    private DatabaseManager dbms;
 
-    public static settingFlag newInstance() {
-        settingFlag settingfragment = new settingFlag();
+    public static SettingFragment newInstance() {
+        SettingFragment settingfragment = new SettingFragment();
         return settingfragment;
     }
 
-    public settingFlag() {
+    public SettingFragment() {
         // Required empty public constructor
     }
 
@@ -67,9 +69,9 @@ public class settingFlag extends Fragment {
 
         rooView = inflater.inflate(R.layout.fragment_setting_flag, container, false);
 
-        dbms = new database_manager(rooView.getContext());
+        dbms = new DatabaseManager(rooView.getContext());
 
-        final database_manager dbms = new database_manager(rooView.getContext());
+        final DatabaseManager dbms = new DatabaseManager(rooView.getContext());
         String[] acc = dbms.getSession();
         emailEdit = (EditText) rooView.findViewById(R.id.emailEdit);
         userNameEdit = (EditText) rooView.findViewById(R.id.userNameEdit);
@@ -196,7 +198,7 @@ public class settingFlag extends Fragment {
             StringBuilder stringBuilder = new StringBuilder();
             try {
                 HttpClient client = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(new webServiceConfig().getHost("updateAccount.php"));
+                HttpPost httpPost = new HttpPost(new WebServiceConfig().getHost("updateAccount.php"));
                 List<NameValuePair> params1 = new ArrayList<>();
                 params1.add(new BasicNameValuePair("userID", params[0]));
                 params1.add(new BasicNameValuePair("updateType", String.valueOf(type)));

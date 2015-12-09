@@ -1,26 +1,21 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.activities;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Rect;
-import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Environment;
-import android.print.PrintAttributes;
-import android.print.pdf.PrintedPdfDocument;
-import android.text.Html;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.SimpleDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +23,7 @@ import java.util.Date;
 /**
  * Created by hackme on 3/8/15.
  */
-public class saveModelFile {
+public class SaveModelFile {
     private Context context;
     private String val;
     private AlertDialog.Builder als;
@@ -36,16 +31,16 @@ public class saveModelFile {
     private String fileType;
 
 
-    public saveModelFile(Context context, String val) {
+    public SaveModelFile(Context context, String val) {
         this.context = context;
         this.val = val;
-        fileType="txt";
+        fileType = "txt";
     }
 
-    public saveModelFile(Context context, String val,String type) {
+    public SaveModelFile(Context context, String val, String type) {
         this.context = context;
         this.val = val;
-        fileType=type;
+        fileType = type;
     }
 
     public void setFileName(final int alg) {
@@ -103,7 +98,7 @@ public class saveModelFile {
                         myDir.mkdirs();
                         DateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
                         Date date = new Date();
-                        String fname = edname.getText() + "-" + dateFormat.format(date) +"."+ fileType;
+                        String fname = edname.getText() + "-" + dateFormat.format(date) + "." + fileType;
                         final File file = new File(myDir, fname);
                         if (file.exists()) file.delete();
                         FileOutputStream out = new FileOutputStream(file);
@@ -135,7 +130,7 @@ public class saveModelFile {
                         Log.e("", "");
                     }
                 } else {
-                    new simpleDialog(context, context.getString(R.string.alert), context.getString(R.string.pls_ent_file_name));
+                    new SimpleDialog(context, context.getString(R.string.alert), context.getString(R.string.pls_ent_file_name));
                 }
             }
         });

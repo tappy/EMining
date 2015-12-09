@@ -5,12 +5,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
+
+import com.example.hackme.emining.model.DatabaseManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -26,18 +26,18 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class tree_total_summary extends Fragment {
+public class TreeTotalSummary extends Fragment {
 
     private View rootView;
     private WebView webView;
     private String data="";
 
-    public static tree_total_summary newInstance() {
-        tree_total_summary fragment = new tree_total_summary();
+    public static TreeTotalSummary newInstance() {
+        TreeTotalSummary fragment = new TreeTotalSummary();
         return fragment;
     }
 
-    public tree_total_summary() {
+    public TreeTotalSummary() {
         // Required empty public constructor
     }
 
@@ -65,7 +65,7 @@ public class tree_total_summary extends Fragment {
                 try {
                     StringBuilder builder = new StringBuilder();
                     HttpClient client = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(new webServiceConfig().getHost("getTreeModel.php"));
+                    HttpPost post = new HttpPost(new WebServiceConfig().getHost("getTreeModel.php"));
                     List<NameValuePair> list = new ArrayList<NameValuePair>();
                     list.add(new BasicNameValuePair("param", params[0]));
                     list.add(new BasicNameValuePair("userid", params[1]));
@@ -90,7 +90,7 @@ public class tree_total_summary extends Fragment {
             protected void onPostExecute(String s) {
                 try {
                     JSONArray js=new JSONArray(s);
-                    data+="<!Doctype html><head>"+new webView_manager(rootView).getCSS()+"</head><body><div class='summary div'>";
+                    data += "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head><body><div class='summary div'>";
                     data+="<div class='div m-top-1' >&nbsp&nbsp&nbsp&nbspจากผลการวิเคราะห์ข้อมูลด้วยต้นไม้ตัดสินใจอัลกอริทึม J48 ได้ค่าต่างๆดังนี้</div>";
                     for(int i=0;i<js.length();i++){
                        String val=js.getString(i).toString().replace("\n","");
@@ -110,7 +110,7 @@ public class tree_total_summary extends Fragment {
                     ex.printStackTrace();
                 }
             }
-        }.execute(mparam, new database_manager(rootView.getContext()).getLoginId());
+        }.execute(mparam, new DatabaseManager(rootView.getContext()).getLoginId());
     }
 
     private String getErrorOnTrainingDataPer(ArrayList<String> list) {

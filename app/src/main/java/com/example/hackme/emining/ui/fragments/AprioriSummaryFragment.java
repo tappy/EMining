@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.fragments;
 
 
 import android.os.AsyncTask;
@@ -12,7 +12,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.WebServiceConfig;
+import com.example.hackme.emining.WebViewManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -29,17 +33,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class apriori_summary_frag extends Fragment {
+public class AprioriSummaryFragment extends Fragment {
 
     private View rootview;
     private WebView webView;
     private ProgressBar aprioriProcessBar;
-    public static apriori_summary_frag newInstance() {
-        apriori_summary_frag fragment = new apriori_summary_frag();
+
+    public static AprioriSummaryFragment newInstance() {
+        AprioriSummaryFragment fragment = new AprioriSummaryFragment();
         return fragment;
     }
 
-    public apriori_summary_frag() {
+    public AprioriSummaryFragment() {
         // Required empty public constructor
     }
 
@@ -60,7 +65,7 @@ public class apriori_summary_frag extends Fragment {
         aprioriProcessBar=(ProgressBar)rootview.findViewById(R.id.apriori_processBar);
         aprioriProcessBar.setVisibility(View.INVISIBLE);
 
-        new loadSummary().execute(new database_manager(rootview.getContext()).getLoginId(),"summary");
+        new loadSummary().execute(new DatabaseManager(rootview.getContext()).getLoginId(), "summary");
         return rootview;
     }
 
@@ -75,8 +80,8 @@ public class apriori_summary_frag extends Fragment {
             try {
                 StringBuilder builder = new StringBuilder();
                 HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(new webServiceConfig().getHost("getAprioryModel.php"));
-                List<NameValuePair> list = new ArrayList<NameValuePair>();
+                HttpPost post = new HttpPost(new WebServiceConfig().getHost("getAprioryModel.php"));
+                List<NameValuePair> list = new ArrayList<>();
                 list.add(new BasicNameValuePair("userid", params[0]));
                 list.add(new BasicNameValuePair("param", params[1]));
                 post.setEntity(new UrlEncodedFormEntity(list));
@@ -90,8 +95,7 @@ public class apriori_summary_frag extends Fragment {
                     }
                 }
                 Log.d("res", builder.toString());
-                String ret = builder.toString();
-                return ret;
+                return builder.toString();
             } catch (Exception e) {
                 return null;
             }
@@ -102,7 +106,7 @@ public class apriori_summary_frag extends Fragment {
             //Toast.makeText(rootview.getContext(), aVoid, Toast.LENGTH_SHORT).show();
             try{
                 JSONArray js=new JSONArray(aVoid);
-                String webData = "<!Doctype html><head>" +new webView_manager(rootview).getCSS()+"</head>" +
+                String webData = "<!Doctype html><head>" + new WebViewManager(rootview).getCSS() + "</head>" +
                         "<body><table widht='100%' border=0>";
                 for(int i=0;i<js.length();i++){
                     webData+="<tr>";

@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,6 +18,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.WebServiceConfig;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -35,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RegisterAct extends Activity {
+public class RegisterActivity extends Activity {
 
     public EditText usemail, usname, uspass;
     public String mstruser, mstrpass, mstremail;
@@ -205,7 +208,7 @@ public class RegisterAct extends Activity {
             stringBuilder = new StringBuilder();
             try {
                 HttpClient client = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(new webServiceConfig().getHost("register.php"));
+                HttpPost httpPost = new HttpPost(new WebServiceConfig().getHost("register.php"));
                 List<NameValuePair> params1 = new ArrayList<NameValuePair>();
                 params1.add(new BasicNameValuePair("user", params[0]));
                 params1.add(new BasicNameValuePair("password", params[1]));

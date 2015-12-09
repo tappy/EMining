@@ -11,6 +11,8 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import com.example.hackme.emining.model.DatabaseManager;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -28,22 +30,22 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link tree_body_frag#newInstance} factory method to
+ * Use the {@link TreeBodyFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class tree_body_frag extends Fragment {
+public class TreeBodyFragment extends Fragment {
 
     private View rootview;
     private WebView webView;
     public static String line = "";
-    private webView_manager web_m;
+    private WebViewManager web_m;
 
-    public static tree_body_frag newInstance() {
-        tree_body_frag fragment = new tree_body_frag();
+    public static TreeBodyFragment newInstance() {
+        TreeBodyFragment fragment = new TreeBodyFragment();
         return fragment;
     }
 
-    public tree_body_frag() {
+    public TreeBodyFragment() {
         // Required empty public constructor
     }
 
@@ -62,8 +64,8 @@ public class tree_body_frag extends Fragment {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
-        web_m = new webView_manager(rootview);
-        new loadSummary().execute(new database_manager(rootview.getContext()).getLoginId(), "body");
+        web_m = new WebViewManager(rootview);
+        new loadSummary().execute(new DatabaseManager(rootview.getContext()).getLoginId(), "body");
         return rootview;
     }
 
@@ -78,7 +80,7 @@ public class tree_body_frag extends Fragment {
             try {
                 StringBuilder builder = new StringBuilder();
                 HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(new webServiceConfig().getHost("getTreeModel.php"));
+                HttpPost post = new HttpPost(new WebServiceConfig().getHost("getTreeModel.php"));
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
                 list.add(new BasicNameValuePair("userid", params[0]));
                 list.add(new BasicNameValuePair("param", params[1]));

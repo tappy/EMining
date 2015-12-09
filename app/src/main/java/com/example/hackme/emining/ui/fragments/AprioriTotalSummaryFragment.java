@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.fragments;
 
 
 import android.os.AsyncTask;
@@ -10,6 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.WebServiceConfig;
+import com.example.hackme.emining.WebViewManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -23,22 +28,21 @@ import org.json.JSONArray;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class apriori_total_summary extends Fragment {
+public class AprioriTotalSummaryFragment extends Fragment {
 
     private View rootView;
     private WebView apriori_summary_WebView;
     private String dataval = "";
 
     // TODO: Rename and change types and number of parameters
-    public static apriori_total_summary newInstance() {
-        apriori_total_summary fragment = new apriori_total_summary();
+    public static AprioriTotalSummaryFragment newInstance() {
+        AprioriTotalSummaryFragment fragment = new AprioriTotalSummaryFragment();
         return fragment;
     }
 
-    public apriori_total_summary() {
+    public AprioriTotalSummaryFragment() {
         // Required empty public constructor
     }
 
@@ -54,8 +58,8 @@ public class apriori_total_summary extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_apriori_total_summary, container, false);
         apriori_summary_WebView = (WebView) rootView.findViewById(R.id.apriori_summary_webView);
         apriori_summary_WebView.setWebViewClient(new WebViewClient());
-        new loadSummary().execute(new database_manager(rootView.getContext()).getLoginId(), "summary");
-        new loadSummary().execute(new database_manager(rootView.getContext()).getLoginId(), "body");
+        new loadSummary().execute(new DatabaseManager(rootView.getContext()).getLoginId(), "summary");
+        new loadSummary().execute(new DatabaseManager(rootView.getContext()).getLoginId(), "body");
         return rootView;
     }
 
@@ -69,7 +73,7 @@ public class apriori_total_summary extends Fragment {
             try {
                 StringBuilder builder = new StringBuilder();
                 HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(new webServiceConfig().getHost("getAprioryModel.php"));
+                HttpPost post = new HttpPost(new WebServiceConfig().getHost("getAprioryModel.php"));
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
                 list.add(new BasicNameValuePair("userid", params[0]));
                 list.add(new BasicNameValuePair("param", params[1]));
@@ -114,7 +118,7 @@ public class apriori_total_summary extends Fragment {
             try {
                 JSONArray js = new JSONArray(aVoid[0]);
                 if (aVoid[1].trim().equals("summary")) {
-                    dataval += "<!Doctype html><head>" + new webView_manager(rootView).getCSS() + "</head><body><div class='summary div'>";
+                    dataval += "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head><body><div class='summary div'>";
                     dataval += "<div class='div m-top-1' >&nbsp&nbsp&nbsp&nbsp จากผลการวิเคราะห์เหมืองข้อมูลได้ใช้วิธีการหากฏความสัมพันธ์อัลกอริทึม Apriori ได้ค่าต่างๆดังนี้</div>";
                     for (int i = 0; i < js.length(); i++) {
                         if (js.getString(i).split(":")[0].trim().equals("Minimum support")) {

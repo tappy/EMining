@@ -27,6 +27,11 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.model.LoadDropDownData;
+import com.example.hackme.emining.ui.activities.AprioriModelView;
+import com.example.hackme.emining.ui.activities.ClusterModelView;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -77,7 +82,7 @@ public class ViewModel extends Fragment {
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
         if (visible) {
-            new loadDropDownTable().execute(new database_manager(rooview.getContext()).getLoginId());
+            new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
         }
     }
 
@@ -185,7 +190,7 @@ public class ViewModel extends Fragment {
                                 new loadAnalysys().execute(
                                         hm.get("table").toString(),
                                         String.valueOf(algorithm),
-                                        new database_manager(rooview.getContext()).getLoginId(),
+                                        new DatabaseManager(rooview.getContext()).getLoginId(),
                                         numCluster.getText().toString(),
                                         iteria.getText().toString(), seed.getText().toString(),
                                         missing);
@@ -197,7 +202,7 @@ public class ViewModel extends Fragment {
                                 new loadAnalysys().execute(
                                         hm.get("table").toString(),
                                         String.valueOf(algorithm),
-                                        new database_manager(rooview.getContext()).getLoginId(),
+                                        new DatabaseManager(rooview.getContext()).getLoginId(),
                                         getSwitch(tree_1_binarySplit, " -B "),
                                         getConfidentFactor(" -C " + tree_2_confidentFactor.getText().toString()),
                                         " -M " + tree_4_minNumObj.getText().toString(),
@@ -215,7 +220,7 @@ public class ViewModel extends Fragment {
                                 new loadAnalysys().execute(
                                         hm.get("table").toString(),
                                         String.valueOf(algorithm),
-                                        new database_manager(rooview.getContext()).getLoginId(),
+                                        new DatabaseManager(rooview.getContext()).getLoginId(),
                                         apri_0.getText().toString(),
                                         apri_1.getText().toString(),
                                         apri_2.getText().toString(),
@@ -235,7 +240,7 @@ public class ViewModel extends Fragment {
             }
         });
 
-        new loadDropDownTable().execute(new database_manager(rooview.getContext()).getLoginId());
+        new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
         return rooview;
     }
 
@@ -325,7 +330,7 @@ public class ViewModel extends Fragment {
             StringBuilder builder = new StringBuilder();
             try {
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                HttpPost post = new HttpPost(new webServiceConfig().getHost("analysysModel.php"));
+                HttpPost post = new HttpPost(new WebServiceConfig().getHost("analysysModel.php"));
                 HttpClient client = new DefaultHttpClient();
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
 
@@ -392,7 +397,7 @@ public class ViewModel extends Fragment {
                 JSONObject jsonObject1 = new JSONObject(s[1]);
                 if (jsonObject1.getInt("model") == 1) {
                     if (jsonObject1.getInt("algorithm") == 0) {
-                        Intent cluster = new Intent(rooview.getContext(), cluster_model_view.class);
+                        Intent cluster = new Intent(rooview.getContext(), ClusterModelView.class);
                         Bundle bundle = new Bundle();
                         bundle.putString("valueModel","");
                         bundle.putInt("class_count", Integer.parseInt(numCluster.getText().toString()));
@@ -401,14 +406,14 @@ public class ViewModel extends Fragment {
 
                     } else if (jsonObject1.getInt("algorithm") == 1) {
 
-                        Intent cluster = new Intent(rooview.getContext(), Tree_model_view.class);
+                        Intent cluster = new Intent(rooview.getContext(), TreeModelView.class);
                         Bundle bundle = new Bundle();
                         bundle.putString("valueModel","");
                         cluster.putExtras(bundle);
                         startActivity(cluster);
 
                     } else if (jsonObject1.getInt("algorithm") == 2) {
-                        Intent cluster = new Intent(rooview.getContext(), Apriori_model_view.class);
+                        Intent cluster = new Intent(rooview.getContext(), AprioriModelView.class);
                         Bundle bundle = new Bundle();
                         bundle.putString("valueModel","");
                         cluster.putExtras(bundle);
@@ -465,7 +470,7 @@ public class ViewModel extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             try {
-                return new loadDropDownTablefunc().loadDropDownTablefunc(new database_manager(rooview.getContext()).getLoginId());
+                return new LoadDropDownData().loading(new DatabaseManager(getActivity().getApplicationContext()).getLoginId());
             } catch (Exception e) {
                 return null;
             }
@@ -509,7 +514,7 @@ public class ViewModel extends Fragment {
             spinner.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    new loadDropDownTable().execute(new database_manager(rooview.getContext()).getLoginId());
+                    new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
                     return false;
                 }
             });
@@ -517,7 +522,7 @@ public class ViewModel extends Fragment {
             spinner2.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    new loadDropDownTable().execute(new database_manager(rooview.getContext()).getLoginId());
+                    new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
                     return false;
                 }
             });
@@ -525,7 +530,7 @@ public class ViewModel extends Fragment {
             spinner3.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    new loadDropDownTable().execute(new database_manager(rooview.getContext()).getLoginId());
+                    new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
                     return false;
                 }
             });
