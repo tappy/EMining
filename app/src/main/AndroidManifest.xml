@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hackme.emining" >
+    package="com.example.hackme.emining">
 
     <uses-sdk android:minSdkVersion="14" />
 
@@ -15,7 +15,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".ui.activities.MainPage"
             android:label="@string/app_name"
@@ -23,58 +23,57 @@
             android:theme="@style/AppTheme_no_arrow">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ui.activities.LoginActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/app_login" >
-        </activity>
+            android:label="@string/app_login"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.activities.RegisterActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_register" >
-        </activity>
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.activities.ClusterModelView"
-            android:label="@string/title_activity_cluster_model_view" >
-        </activity>
+            android:label="@string/title_activity_cluster_model_view"></activity>
         <activity
             android:name=".ui.activities.TreeModelView"
-            android:label="@string/title_activity_tree_model_view" >
-        </activity>
+            android:label="@string/title_activity_tree_model_view"></activity>
         <activity
             android:name=".ui.activities.AprioriModelView"
-            android:label="@string/title_activity_apriori_model_view" >
-        </activity>
+            android:label="@string/title_activity_apriori_model_view"></activity>
         <activity
             android:name=".ui.activities.RequestFile"
-            android:noHistory="true"
-            android:label="@string/title_activity_requesting_file" >
-
+            android:label="@string/title_activity_requesting_file"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:mimeType="text/csv"/>
-            </intent-filter>
 
+                <data android:mimeType="text/csv" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:mimeType="*/*"/>
-            </intent-filter>
 
+                <data android:mimeType="*/*" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:pathPattern=".*\\.arff"/>
-            </intent-filter>
 
+                <data android:pathPattern=".*\\.arff" />
+            </intent-filter>
         </activity>
+        <activity android:name=".ui.activities.CoreActivity"></activity>
     </application>
 
 </manifest>
