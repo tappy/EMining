@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -16,8 +16,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.Helpers.WebServiceConfig;
 import com.example.hackme.emining.model.DatabaseManager;
-import com.example.hackme.emining.ui.activities.SaveModelFile;
+import com.example.hackme.emining.ui.fragments.TreeBodyFragment;
+import com.example.hackme.emining.ui.fragments.TreeSummaryFragment;
+import com.example.hackme.emining.ui.fragments.TreeTotalSummary;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

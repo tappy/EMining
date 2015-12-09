@@ -15,8 +15,8 @@ import android.widget.ProgressBar;
 
 import com.example.hackme.emining.R;
 import com.example.hackme.emining.model.DatabaseManager;
-import com.example.hackme.emining.WebServiceConfig;
-import com.example.hackme.emining.WebViewManager;
+import com.example.hackme.emining.Helpers.WebServiceConfig;
+import com.example.hackme.emining.Helpers.WebViewManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

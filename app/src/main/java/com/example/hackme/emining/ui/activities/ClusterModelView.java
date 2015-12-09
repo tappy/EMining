@@ -15,8 +15,8 @@ import com.example.hackme.emining.R;
 import com.example.hackme.emining.ui.fragments.ClusterBodyFragment;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.ui.fragments.HeadClusterFragment;
-import com.example.hackme.emining.Summary;
-import com.example.hackme.emining.WebServiceConfig;
+import com.example.hackme.emining.ui.fragments.SummaryFragment;
+import com.example.hackme.emining.Helpers.WebServiceConfig;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -252,7 +252,7 @@ public class ClusterModelView extends Activity implements ActionBar.TabListener 
                 case 0:
                     return HeadClusterFragment.newInstance();
                 case 1:
-                    return Summary.newInstance();
+                    return SummaryFragment.newInstance();
                 case 2:
                     return ClusterBodyFragment.newInstance("body", 1);
                 default:

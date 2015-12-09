@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.fragments;
 
 
 import android.os.AsyncTask;
@@ -11,6 +11,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.Helpers.WebServiceConfig;
+import com.example.hackme.emining.Helpers.WebViewManager;
 import com.example.hackme.emining.model.DatabaseManager;
 
 import org.apache.http.HttpResponse;
@@ -27,19 +30,19 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Summary extends Fragment {
+public class SummaryFragment extends Fragment {
 
     private View rootView;
     private WebView webView;
     private String data = "";
     private ProgressBar cluster_process;
 
-    public static Summary newInstance() {
-        Summary fragment = new Summary();
+    public static SummaryFragment newInstance() {
+        SummaryFragment fragment = new SummaryFragment();
         return fragment;
     }
 
-    public Summary() {
+    public SummaryFragment() {
         // Required empty public constructor
     }
 
@@ -52,7 +55,7 @@ public class Summary extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_summary, container, false);
-        cluster_process=(ProgressBar)rootView.findViewById(R.id.cluster_process);
+        cluster_process = (ProgressBar) rootView.findViewById(R.id.cluster_process);
         cluster_process.setVisibility(View.INVISIBLE);
         webView = (WebView) rootView.findViewById(R.id.cluster_summary);
         webView.setWebViewClient(new WebViewClient());
@@ -89,9 +92,9 @@ public class Summary extends Fragment {
                             builder.append(line);
                         }
                     }
-                    String[] str=new String[2];
-                    str[0]=builder.toString();
-                    str[1]=params[0];
+                    String[] str = new String[2];
+                    str[0] = builder.toString();
+                    str[1] = params[0];
                     return str;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -103,24 +106,24 @@ public class Summary extends Fragment {
             protected void onPostExecute(String[] s) {
                 try {
                     JSONArray jsonArray = new JSONArray(s[0]);
-                    if(s[1]=="head") {
+                    if (s[1] == "head") {
                         data += "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head><body><div class='summary div'>";
-                      int iteration = Integer.parseInt(jsonArray.getString(0).split(":")[1].trim());
+                        int iteration = Integer.parseInt(jsonArray.getString(0).split(":")[1].trim());
                         data += "<div class='div m-top-1' >&nbsp&nbsp&nbsp&nbspจากผลการวิเคราะห์ข้อมูลด้วยวิธีการจัดกลุ่มโดยใช้อัลกอริทึม Simple KMeans ได้ค่าต่างๆตังนี้</div>" +
                                 "<div class='div draw_node m-top-1' > ค่า Number of iterations เท่ากับ";
                         data += " " + iteration + " </div>";
                         data += "<div class='div draw_node m-top-1' > ค่า Within cluster sum of squared errors เท่ากับ";
                         data += " " + Float.parseFloat(jsonArray.getString(1).split(":")[1].trim()) + " </div>";
-                    }else if(s[1]=="footer"){
-                        data+="<div class='div m-top-1' > ซึ่งในการวิเคราะห์ได้ทำการจัดกลุ่มของข้อมูลได้เป็น "+(jsonArray.length()-1)+" กลุ่มดังนี้</div>";
-                        for(int i=1;i<jsonArray.length();i++){
-                            String val=jsonArray.getString(i).replaceAll("[(-)]+", " ");
-                                   val=val.replaceAll(" +", " ");
-                            String[] v=val.trim().split(" ");
-                            data+="<div class='div draw_node m-top-1' >  กลุ่มที่ "+(i-1)+" มีจำนวนข้อมูล "+v[1]+" เรคคอร์ด คิดเป็น "+v[2]+"</div>";
+                    } else if (s[1] == "footer") {
+                        data += "<div class='div m-top-1' > ซึ่งในการวิเคราะห์ได้ทำการจัดกลุ่มของข้อมูลได้เป็น " + (jsonArray.length() - 1) + " กลุ่มดังนี้</div>";
+                        for (int i = 1; i < jsonArray.length(); i++) {
+                            String val = jsonArray.getString(i).replaceAll("[(-)]+", " ");
+                            val = val.replaceAll(" +", " ");
+                            String[] v = val.trim().split(" ");
+                            data += "<div class='div draw_node m-top-1' >  กลุ่มที่ " + (i - 1) + " มีจำนวนข้อมูล " + v[1] + " เรคคอร์ด คิดเป็น " + v[2] + "</div>";
                         }
-                        data+="</div></body></html>";
-                        webView.loadData(data,"text/html; charset=UTF-8",null);
+                        data += "</div></body></html>";
+                        webView.loadData(data, "text/html; charset=UTF-8", null);
                         cluster_process.setVisibility(View.INVISIBLE);
                     }
                 } catch (Exception ex) {

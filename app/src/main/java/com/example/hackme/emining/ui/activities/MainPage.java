@@ -23,7 +23,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.hackme.emining.R;
-import com.example.hackme.emining.ViewModel;
+import com.example.hackme.emining.ui.fragments.ViewModelFragment;
 import com.example.hackme.emining.model.DataManager;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.ui.fragments.SettingFragment;
@@ -232,7 +232,7 @@ public class MainPage extends Activity implements ActionBar.TabListener {
                 case 0:
                     return DataManager.newInstance();
                 case 1:
-                    return ViewModel.newInstance();
+                    return ViewModelFragment.newInstance();
                 case 2:
                     return SettingFragment.newInstance();
                 default:

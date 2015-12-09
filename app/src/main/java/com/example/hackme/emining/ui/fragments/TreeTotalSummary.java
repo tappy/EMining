@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.fragments;
 
 
 import android.os.AsyncTask;
@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.Helpers.WebServiceConfig;
+import com.example.hackme.emining.Helpers.WebViewManager;
 import com.example.hackme.emining.model.DatabaseManager;
 
 import org.apache.http.HttpResponse;

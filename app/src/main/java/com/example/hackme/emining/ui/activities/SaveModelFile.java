@@ -11,7 +11,7 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.example.hackme.emining.R;
-import com.example.hackme.emining.SimpleDialog;
+import com.example.hackme.emining.customView.SimpleDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;

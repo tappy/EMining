@@ -2,7 +2,7 @@ package com.example.hackme.emining.model;
 
 import android.util.Log;
 
-import com.example.hackme.emining.WebServiceConfig;
+import com.example.hackme.emining.Helpers.WebServiceConfig;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

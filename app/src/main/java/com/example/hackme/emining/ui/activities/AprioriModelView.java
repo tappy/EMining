@@ -19,7 +19,7 @@ import com.example.hackme.emining.ui.fragments.AprioriSummaryFragment;
 import com.example.hackme.emining.ui.fragments.AprioriTotalSummaryFragment;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.ui.fragments.AprioriBodyFragment;
-import com.example.hackme.emining.WebServiceConfig;
+import com.example.hackme.emining.Helpers.WebServiceConfig;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

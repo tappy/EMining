@@ -1,4 +1,4 @@
-package com.example.hackme.emining;
+package com.example.hackme.emining.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -27,6 +27,9 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import com.example.hackme.emining.R;
+import com.example.hackme.emining.ui.activities.TreeModelView;
+import com.example.hackme.emining.Helpers.WebServiceConfig;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.model.LoadDropDownData;
 import com.example.hackme.emining.ui.activities.AprioriModelView;
@@ -49,7 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class ViewModel extends Fragment {
+public class ViewModelFragment extends Fragment {
 
     public View rooview;
     public Spinner spinner, spinner2, spinner3;
@@ -69,12 +72,12 @@ public class ViewModel extends Fragment {
     private Switch tree_1_binarySplit, tree_6_reduceErrorPuning, tree_9_subTree, tree_10_unPruned, tree_11_useLaplace;
     private TabHost tabHost;
 
-    public static ViewModel newInstance() {
-        ViewModel fragment = new ViewModel();
+    public static ViewModelFragment newInstance() {
+        ViewModelFragment fragment = new ViewModelFragment();
         return fragment;
     }
 
-    public ViewModel() {
+    public ViewModelFragment() {
         // Required empty public constructor
     }
 
