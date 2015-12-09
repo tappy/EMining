@@ -67,14 +67,13 @@ public class ViewModelFragment extends Fragment {
     private EditText iteria, seed;
     private Switch switcher;
     private String missing;
-    private EditText apri_0, apri_1, apri_2, apri_3, apri_4, apri_5, apri_6;
+    private EditText apri0, apri1, apri2, apri3, apri4, apri5, apri6;
     private EditText tree_2_confidentFactor, tree_4_minNumObj, tree_5_numFolds, tree_8_treeSeed;
     private Switch tree_1_binarySplit, tree_6_reduceErrorPuning, tree_9_subTree, tree_10_unPruned, tree_11_useLaplace;
     private TabHost tabHost;
 
     public static ViewModelFragment newInstance() {
-        ViewModelFragment fragment = new ViewModelFragment();
-        return fragment;
+        return new ViewModelFragment();
     }
 
     public ViewModelFragment() {
@@ -129,13 +128,13 @@ public class ViewModelFragment extends Fragment {
         seed = (EditText) rooview.findViewById(R.id.tree_8_treeSeed);
         switcher = (Switch) rooview.findViewById(R.id.replaceMN);
 
-        apri_0 = (EditText) rooview.findViewById(R.id.classIndex);
-        apri_1 = (EditText) rooview.findViewById(R.id.delta);
-        apri_2 = (EditText) rooview.findViewById(R.id.lowerBmin);
-        apri_3 = (EditText) rooview.findViewById(R.id.minMet);
-        apri_4 = (EditText) rooview.findViewById(R.id.numRu);
-        apri_5 = (EditText) rooview.findViewById(R.id.significanceL);
-        apri_6 = (EditText) rooview.findViewById(R.id.upperBmin);
+        apri0 = (EditText) rooview.findViewById(R.id.classIndex);
+        apri1 = (EditText) rooview.findViewById(R.id.delta);
+        apri2 = (EditText) rooview.findViewById(R.id.lowerBmin);
+        apri3 = (EditText) rooview.findViewById(R.id.minMet);
+        apri4 = (EditText) rooview.findViewById(R.id.numRu);
+        apri5 = (EditText) rooview.findViewById(R.id.significanceL);
+        apri6 = (EditText) rooview.findViewById(R.id.upperBmin);
 
         tree_1_binarySplit = (Switch) rooview.findViewById(R.id.tree_1_binarySplit);
         tree_2_confidentFactor = (EditText) rooview.findViewById(R.id.tree_2_confidentFactor);
@@ -178,7 +177,7 @@ public class ViewModelFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    HashMap<String, Object> hm;
+                    HashMap hm;
                     int algorithm = tabHost.getCurrentTab();
                     switch (algorithm) {
                         case 0:
@@ -212,7 +211,7 @@ public class ViewModelFragment extends Fragment {
                                         getNumFold(" -N " + tree_5_numFolds.getText().toString()),
                                         getSwitch(tree_6_reduceErrorPuning, " -R "),
                                         getSeed(" -Q " + tree_8_treeSeed.getText().toString()),
-                                        getSubtree(" -S "),
+                                        getSubtree(),
                                         getSwitch(tree_10_unPruned, " -U "),
                                         getSwitch(tree_11_useLaplace, " -A "));
                             }
@@ -224,18 +223,15 @@ public class ViewModelFragment extends Fragment {
                                         hm.get("table").toString(),
                                         String.valueOf(algorithm),
                                         new DatabaseManager(rooview.getContext()).getLoginId(),
-                                        apri_0.getText().toString(),
-                                        apri_1.getText().toString(),
-                                        apri_2.getText().toString(),
-                                        apri_3.getText().toString(),
-                                        apri_4.getText().toString(),
-                                        apri_5.getText().toString(),
-                                        apri_6.getText().toString());
+                                        apri0.getText().toString(),
+                                        apri1.getText().toString(),
+                                        apri2.getText().toString(),
+                                        apri3.getText().toString(),
+                                        apri4.getText().toString(),
+                                        apri5.getText().toString(),
+                                        apri6.getText().toString());
                             }
                             break;
-                        default:
-
-                            ;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -255,8 +251,6 @@ public class ViewModelFragment extends Fragment {
         }
     }
 
-    ;
-
     private String inverseGetSwitch(Switch sw, String rtext) {
         if (sw.isChecked()) {
             return "";
@@ -273,8 +267,8 @@ public class ViewModelFragment extends Fragment {
         }
     }
 
-    private String getSubtree(String ret) {
-        if (!inverseGetSwitch(tree_9_subTree, " -S ").toString().equals("")) {
+    private String getSubtree() {
+        if (!inverseGetSwitch(tree_9_subTree, " -S ").equals("")) {
             if (tree_10_unPruned.isChecked()) return "";
             else return " -S ";
         }
@@ -335,7 +329,7 @@ public class ViewModelFragment extends Fragment {
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 HttpPost post = new HttpPost(new WebServiceConfig().getHost("analysysModel.php"));
                 HttpClient client = new DefaultHttpClient();
-                List<NameValuePair> list = new ArrayList<NameValuePair>();
+                List<NameValuePair> list = new ArrayList<>();
 
                 list.add(new BasicNameValuePair("tableName", params[0]));
                 list.add(new BasicNameValuePair("algorithm", params[1]));
@@ -396,7 +390,6 @@ public class ViewModelFragment extends Fragment {
         protected void onPostExecute(String[] s) {
             progressDialog.dismiss();
             try {
-                Log.d("Tree error", s.toString());
                 JSONObject jsonObject1 = new JSONObject(s[1]);
                 if (jsonObject1.getInt("model") == 1) {
                     if (jsonObject1.getInt("algorithm") == 0) {
@@ -427,12 +420,16 @@ public class ViewModelFragment extends Fragment {
                     AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
                     al.setTitle("Error!");
                     al.setIcon(android.R.drawable.ic_dialog_alert);
-                    if (s[0].equals("0")) {
-                        al.setMessage(getString(R.string.file_not_sup) + " Simple KMeans");
-                    } else if (s[0].equals("1")) {
-                        al.setMessage(getString(R.string.file_not_sup) + " J48");
-                    } else if (s[0].equals("2")) {
-                        al.setMessage(getString(R.string.file_not_sup) + " Apriori");
+                    switch (s[0]) {
+                        case "0":
+                            al.setMessage(getString(R.string.file_not_sup) + " Simple KMeans");
+                            break;
+                        case "1":
+                            al.setMessage(getString(R.string.file_not_sup) + " J48");
+                            break;
+                        case "2":
+                            al.setMessage(getString(R.string.file_not_sup) + " Apriori");
+                            break;
                     }
                     al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
                         @Override
