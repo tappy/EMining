@@ -1,9 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activities.MainPage">
     <item android:id="@+id/action_logout"
         android:icon="@drawable/ic_action_logout_1_512"
         android:title="@string/log_out"
         android:orderInCategory="100"
-        android:showAsAction="always" />
+        app:showAsAction="always" />
 </menu>

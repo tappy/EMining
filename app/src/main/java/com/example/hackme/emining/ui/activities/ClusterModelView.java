@@ -9,8 +9,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.example.hackme.emining.R;
@@ -27,7 +31,6 @@ import org.json.JSONArray;
 
 public class ClusterModelView extends AppCompatActivity {
 
-    private ClusterPagerAdapter pageAdapter;
     private ViewPager pager;
     private ActionBar actionBar;
     private int cluster_class_count;
@@ -45,29 +48,15 @@ public class ClusterModelView extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         cluster_class_count = bundle.getInt("class_count");
         if (bundle.getString("valueModel").equals("")) {
-
             tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+            tabs.setDividerColorResource(R.color.baseColorPlus);
+            tabs.setBackgroundResource(R.color.baseColor);
+            tabs.setTextColorResource(R.color.text_color);
             ClusterPagerAdapter clusterPagerAdapter = new ClusterPagerAdapter(getSupportFragmentManager());
             pager = (ViewPager) findViewById(R.id.cluster_pager);
             pager.setAdapter(clusterPagerAdapter);
             pager.setOffscreenPageLimit(5);
             tabs.setViewPager(pager);
-            tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-
-                }
-            });
         }
     }
 
