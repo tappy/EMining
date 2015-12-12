@@ -1,4 +1,4 @@
-package com.example.hackme.emining.ui.activities;
+package com.example.hackme.emining.model;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -50,19 +50,15 @@ public class SaveModelFile {
         switch (alg) {
             case 0:
                 edname.setText("Cluster_model");
-                ;
                 break;
             case 1:
                 edname.setText("Tree_model");
-                ;
                 break;
             case 2:
                 edname.setText("Apriori_model");
-                ;
                 break;
             default:
                 edname.setText("my_model");
-                ;
         }
         als.setTitle(context.getString(R.string.set_file_name));
         als.setView(edname);

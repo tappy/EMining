@@ -1,6 +1,5 @@
 package com.example.hackme.emining.ui.activities;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +17,7 @@ import com.example.hackme.emining.R;
 import com.example.hackme.emining.entities.GetApioriModelReq;
 import com.example.hackme.emining.model.GetApioriModelLoader;
 import com.example.hackme.emining.model.ModelLoader;
+import com.example.hackme.emining.model.SaveModelFile;
 import com.example.hackme.emining.ui.fragments.AprioriSummaryFragment;
 import com.example.hackme.emining.ui.fragments.AprioriTotalSummaryFragment;
 import com.example.hackme.emining.model.DatabaseManager;
