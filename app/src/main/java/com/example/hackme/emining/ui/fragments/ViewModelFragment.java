@@ -402,7 +402,7 @@ public class ViewModelFragment extends Fragment {
                     public void run() {
                         if (!data.equals("false")) {
                             progressBardropdown.setVisibility(View.INVISIBLE);
-                            creatSpiner(data);
+                            createSpiner(data);
                         } else {
                             progressBardropdown.setVisibility(View.INVISIBLE);
                         }
@@ -422,7 +422,7 @@ public class ViewModelFragment extends Fragment {
         });
     }
 
-    public void creatSpiner(String s) {
+    public void createSpiner(String s) {
         try {
             Log.d("Load", "Load table list");
             arrayList = new ArrayList();
