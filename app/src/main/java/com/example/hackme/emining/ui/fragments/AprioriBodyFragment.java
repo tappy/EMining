@@ -51,7 +51,7 @@ public class AprioriBodyFragment extends Fragment {
 
         listView = (ListView) rootview.findViewById(R.id.apriori_body_listview);
         GetApioriModelReq req = new GetApioriModelReq();
-        req.userId = new DatabaseManager(rootview.getContext()).getLoginId();
+        req.userid = new DatabaseManager(rootview.getContext()).getLoginId();
         req.param = "body";
         new GetApioriModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override

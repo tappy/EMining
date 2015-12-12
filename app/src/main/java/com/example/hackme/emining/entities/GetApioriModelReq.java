@@ -9,5 +9,5 @@ public class GetApioriModelReq {
     @SerializedName("param")
     public String param;
     @SerializedName("userid")
-    public String userId;
+    public String userid;
 }

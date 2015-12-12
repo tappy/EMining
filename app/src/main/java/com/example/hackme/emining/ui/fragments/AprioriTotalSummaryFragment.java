@@ -49,14 +49,13 @@ public class AprioriTotalSummaryFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_apriori_total_summary, container, false);
         apriori_summary_WebView = (WebView) rootView.findViewById(R.id.apriori_summary_webView);
         apriori_summary_WebView.setWebViewClient(new WebViewClient());
-        loadBody("body");
         loadBody("summary");
         return rootView;
     }
 
     public void loadBody(String type) {
         req = new GetApioriModelReq();
-        req.userId = new DatabaseManager(getContext()).getLoginId();
+        req.userid = new DatabaseManager(getContext()).getLoginId();
         req.param = type;
         new GetApioriModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
@@ -78,6 +77,7 @@ public class AprioriTotalSummaryFragment extends Fragment {
                                         dataval += "<div class='div draw_node m-top-1' > ค่า Number of cycles performed เท่ากับ " + js.getString(i).split(":")[1].trim() + " </div>";
                                     }
                                 }
+                                loadBody("body");
                             } else if (req.param.equals("body")) {
                                 String[] listArr = new String[100];
                                 dataval += "<div class='div m-top-1' >และมีกฏความสัมพันธ์ทั้ง " + js.length() + " กฏดังต่อไปนี้ </div>";

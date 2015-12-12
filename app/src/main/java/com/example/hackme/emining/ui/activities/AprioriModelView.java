@@ -45,10 +45,15 @@ public class AprioriModelView extends AppCompatActivity {
         if (bundle.getString("valueModel").equals("")) {
 
             tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+            tabs.setDividerColorResource(R.color.baseColorPlus);
+            tabs.setBackgroundResource(R.color.baseColor);
+            tabs.setTextColorResource(R.color.text_color);
+            tabs.setIndicatorHeight(8);
+            tabs.setIndicatorColorResource(R.color.baseColorPlus);
             sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-            pager = (ViewPager) findViewById(R.id.aprioripager);
+            pager = (ViewPager) findViewById(R.id.pager);
             pager.setAdapter(sectionsPagerAdapter);
-            pager.setOffscreenPageLimit(5);
+            pager.setOffscreenPageLimit(sectionsPagerAdapter.getCount());
             tabs.setViewPager(pager);
             tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
@@ -133,7 +138,7 @@ public class AprioriModelView extends AppCompatActivity {
     private void loadData(ModelLoader.DataLoadingListener listener) {
         GetApioriModelReq req = new GetApioriModelReq();
         req.param = "full_data";
-        req.userId = new DatabaseManager(getBaseContext()).getLoginId();
+        req.userid = new DatabaseManager(getBaseContext()).getLoginId();
         new GetApioriModelLoader(req, listener);
     }
 

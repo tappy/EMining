@@ -8,9 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.example.hackme.emining.R;
@@ -53,10 +51,10 @@ public class AprioriSummaryFragment extends Fragment {
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
         aprioriProcessBar = (ProgressBar) rootview.findViewById(R.id.apriori_processBar);
-        aprioriProcessBar.setVisibility(View.INVISIBLE);
+        aprioriProcessBar.setVisibility(View.VISIBLE);
         req = new GetApioriModelReq();
         req.param = "summary";
-        req.userId = new DatabaseManager(rootview.getContext()).getLoginId();
+        req.userid = new DatabaseManager(rootview.getContext()).getLoginId();
         new GetApioriModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
             public void onLoaded(final String data) {
