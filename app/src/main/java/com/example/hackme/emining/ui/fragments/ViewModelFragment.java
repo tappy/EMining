@@ -401,8 +401,9 @@ public class ViewModelFragment extends Fragment {
                     @Override
                     public void run() {
                         if (!data.equals("false")) {
+                            progressBardropdown.setVisibility(View.INVISIBLE);
                             creatSpiner(data);
-                        }else {
+                        } else {
                             progressBardropdown.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -411,7 +412,12 @@ public class ViewModelFragment extends Fragment {
 
             @Override
             public void onFailed(String message) {
-
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBardropdown.setVisibility(View.INVISIBLE);
+                    }
+                });
             }
         });
     }
