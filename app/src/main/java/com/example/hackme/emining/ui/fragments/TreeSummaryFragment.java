@@ -14,7 +14,9 @@ import android.webkit.WebView;
 import com.example.hackme.emining.R;
 import com.example.hackme.emining.Helpers.WebViewManager;
 import com.example.hackme.emining.entities.SummayLoaderReq;
+import com.example.hackme.emining.entities.TreeModelReq;
 import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.model.GetTreeModelLoader;
 import com.example.hackme.emining.model.ModelLoader;
 import com.example.hackme.emining.model.SummaryLoader;
 
@@ -52,58 +54,63 @@ public class TreeSummaryFragment extends Fragment {
         webView = (WebView) rootview.findViewById(R.id.tree_summary_web_wiew);
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
-        SummayLoaderReq req = new SummayLoaderReq();
+        TreeModelReq req = new TreeModelReq();
         req.userid = new DatabaseManager(rootview.getContext()).getLoginId();
         req.param = "summary";
         loadSummary(req);
         return rootview;
     }
 
-    public void loadSummary(SummayLoaderReq req) {
-        new SummaryLoader(req, new ModelLoader.DataLoadingListener() {
+    public void loadSummary(TreeModelReq req) {
+        new GetTreeModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    JSONArray js = new JSONArray(data);
-                    webData = "<!Doctype html><head>" + new WebViewManager().getCSS() + "</head>" +
-                            "<body><table widht='100%' border=0>";
-                    webData += getFirstSummary(js);
-                    int seeCount = 0;
-                    for (int i = 0; i < js.length(); i++) {
-                        if (js.getString(i).trim().equals("=== Error on training data ===")) {
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONArray js = new JSONArray(data);
+                            webData = "<!Doctype html><head>" + new WebViewManager().getCSS() + "</head>" +
+                                    "<body><table widht='100%' border=0>";
+                            webData += getFirstSummary(js);
+                            int seeCount = 0;
+                            for (int i = 0; i < js.length(); i++) {
+                                if (js.getString(i).trim().equals("=== Error on training data ===")) {
 
-                        } else if (js.getString(i).trim().equals("=== Confusion Matrix ===") && seeCount == 0) {
-                            seeCount++;
-                        } else if (js.getString(i).trim().equals("=== Stratified cross-validation ===")) {
+                                } else if (js.getString(i).trim().equals("=== Confusion Matrix ===") && seeCount == 0) {
+                                    seeCount++;
+                                } else if (js.getString(i).trim().equals("=== Stratified cross-validation ===")) {
 
-                            webData += "<tr><table widht='100%' border=0 style='background-color:#009688;'>";
-                            ArrayList marr = getListData(js, getLine(js, "=== Stratified cross-validation ===", 1), getLine(js, "=== Confusion Matrix ===", 2) - 1);
-                            webData += "<thead>" +
-                                    "<tr>" +
-                                    getErrorOnTrainingDataTitle(marr, "#009688") +
-                                    "</tr>" +
-                                    "</thead>";
-                            webData += "<tbody>" +
-                                    getErrorOnTrainingDataPer(marr) +
-                                    getErrorOnTrainingDataBody(marr) +
-                                    "</tbody>";
-                            webData += "</table><tr>";
+                                    webData += "<tr><table widht='100%' border=0 style='background-color:#009688;'>";
+                                    ArrayList marr = getListData(js, getLine(js, "=== Stratified cross-validation ===", 1), getLine(js, "=== Confusion Matrix ===", 2) - 1);
+                                    webData += "<thead>" +
+                                            "<tr>" +
+                                            getErrorOnTrainingDataTitle(marr, "#009688") +
+                                            "</tr>" +
+                                            "</thead>";
+                                    webData += "<tbody>" +
+                                            getErrorOnTrainingDataPer(marr) +
+                                            getErrorOnTrainingDataBody(marr) +
+                                            "</tbody>";
+                                    webData += "</table><tr>";
 
-                        } else if (js.getString(i).trim().equals("=== Confusion Matrix ===") && seeCount > 0) {
-                            seeCount++;
-                            webData += "<tr><table widht='100%' border=0 style='background-color:#009688;'>";
-                            ArrayList marr = getListData(js, getLine(js, "=== Confusion Matrix ===", 2), js.length() - 1);
-                            webData += getConfusionMatrix(marr, "#009688");
-                            webData += "</table><tr>";
+                                } else if (js.getString(i).trim().equals("=== Confusion Matrix ===") && seeCount > 0) {
+                                    seeCount++;
+                                    webData += "<tr><table widht='100%' border=0 style='background-color:#009688;'>";
+                                    ArrayList marr = getListData(js, getLine(js, "=== Confusion Matrix ===", 2), js.length() - 1);
+                                    webData += getConfusionMatrix(marr, "#009688");
+                                    webData += "</table><tr>";
 
+                                }
+                            }
+                            webData += "</table></body></html>";
+                            webView.loadData(webData, "text/html; charset=UTF-8", null);
+                            tree_progressDialog.dismiss();
+                        } catch (Exception e) {
+                            Log.d("webview err", e.toString());
                         }
                     }
-                    webData += "</table></body></html>";
-                    webView.loadData(webData, "text/html; charset=UTF-8", null);
-                    tree_progressDialog.dismiss();
-                } catch (Exception e) {
-                    Log.d("webview err", e.toString());
-                }
+                });
             }
 
             @Override

@@ -13,7 +13,9 @@ import android.webkit.WebView;
 import com.example.hackme.emining.R;
 import com.example.hackme.emining.Helpers.WebViewManager;
 import com.example.hackme.emining.entities.SummayLoaderReq;
+import com.example.hackme.emining.entities.TreeModelReq;
 import com.example.hackme.emining.model.DatabaseManager;
+import com.example.hackme.emining.model.GetTreeModelLoader;
 import com.example.hackme.emining.model.ModelLoader;
 import com.example.hackme.emining.model.SummaryLoader;
 
@@ -49,15 +51,15 @@ public class TreeBodyFragment extends Fragment {
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
         web_m = new WebViewManager();
-        SummayLoaderReq req = new SummayLoaderReq();
+        TreeModelReq req = new TreeModelReq();
         req.userid = new DatabaseManager(rootview.getContext()).getLoginId();
         req.param = "body";
         loadSummary(req);
         return rootview;
     }
 
-    public void loadSummary(SummayLoaderReq req) {
-        new SummaryLoader(req, new ModelLoader.DataLoadingListener() {
+    public void loadSummary(TreeModelReq req) {
+        new GetTreeModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
             public void onLoaded(final String data) {
                 getActivity().runOnUiThread(new Runnable() {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -43,17 +44,20 @@ public class TreeModelView extends AppCompatActivity {
 
         myActionBar = getSupportActionBar();
         myActionBar.setDisplayHomeAsUpEnabled(true);
-        myActionBar.setNavigationMode(myActionBar.NAVIGATION_MODE_TABS);
-        myActionBar.setStackedBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_color));
-
+        myActionBar.setStackedBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.actionbar_color));
         Bundle bundle = getIntent().getExtras();
         if (bundle.getString("valueModel").equals("")) {
 
             tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+            tabs.setDividerColorResource(R.color.baseColorPlus);
+            tabs.setBackgroundResource(R.color.baseColor);
+            tabs.setTextColorResource(R.color.text_color);
+            tabs.setIndicatorHeight(8);
+            tabs.setIndicatorColorResource(R.color.baseColorPlus);
             sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-            pager = (ViewPager) findViewById(R.id.aprioripager);
+            pager = (ViewPager) findViewById(R.id.pager);
             pager.setAdapter(sectionsPagerAdapter);
-            pager.setOffscreenPageLimit(5);
+            pager.setOffscreenPageLimit(sectionsPagerAdapter.getCount());
             tabs.setViewPager(pager);
             tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
@@ -71,9 +75,6 @@ public class TreeModelView extends AppCompatActivity {
 
                 }
             });
-
-        } else {
-            //localfile
         }
     }
 
@@ -114,16 +115,21 @@ public class TreeModelView extends AppCompatActivity {
         req.userid = new DatabaseManager(getBaseContext()).getLoginId();
         loadData(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    jsModel = new JSONArray(data);
-                    for (int i = 0; i < jsModel.length() - 1; i++) {
-                        val += jsModel.getString(i);
+            public void onLoaded(final String data) {
+                TreeModelView.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            jsModel = new JSONArray(data);
+                            for (int i = 0; i < jsModel.length() - 1; i++) {
+                                val += jsModel.getString(i);
+                            }
+                            new SaveModelFile(TreeModelView.this, val).setFileName(1);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
-                    new SaveModelFile(TreeModelView.this, val).setFileName(1);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                });
             }
 
             @Override
