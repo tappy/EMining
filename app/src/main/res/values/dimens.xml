@@ -9,12 +9,12 @@
     <!-- end value -->
 
     <!-- font size -->
-    <dimen name="very_supper_small_font">12dp</dimen>
-    <dimen name="supper_small_font">14dp</dimen>
-    <dimen name="small_font">16dp</dimen>
-    <dimen name="normal_font">20dp</dimen>
-    <dimen name="big_font">30dp</dimen>
-    <dimen name="super_big_font">40dp</dimen>
+    <dimen name="very_supper_small_font">12sp</dimen>
+    <dimen name="supper_small_font">14sp</dimen>
+    <dimen name="small_font">16sp</dimen>
+    <dimen name="normal_font">20sp</dimen>
+    <dimen name="big_font">30sp</dimen>
+    <dimen name="super_big_font">40sp</dimen>
     <!-- end font size -->
 
     <!-- padding  -->
