@@ -18,6 +18,7 @@ import com.example.hackme.emining.model.ModelLoader;
 import com.example.hackme.emining.model.SummaryLoader;
 
 import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 public class TreeBodyFragment extends Fragment {
@@ -46,10 +47,8 @@ public class TreeBodyFragment extends Fragment {
         View rootview = inflater.inflate(R.layout.fragment_tree_body_frag, container, false);
         webView = (WebView) rootview.findViewById(R.id.tree_body_frag);
         webView.setWebChromeClient(new WebChromeClient());
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        web_m = new WebViewManager(rootview);
+        webView.getSettings().setJavaScriptEnabled(true);
+        web_m = new WebViewManager();
         SummayLoaderReq req = new SummayLoaderReq();
         req.userid = new DatabaseManager(rootview.getContext()).getLoginId();
         req.param = "body";
@@ -60,36 +59,41 @@ public class TreeBodyFragment extends Fragment {
     public void loadSummary(SummayLoaderReq req) {
         new SummaryLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    JSONArray js = new JSONArray(data);
-                    line += web_m.htmlHead(web_m.getCSS());
-                    ArrayList<String> as = getTreeVal(js);
-                    for (int j = 0; j < as.size(); j++) {
-                        String[] str = as.get(j).split(",");
-                        line += "<div class='div draw_node m-top-1'>" +
-                                "<div class='inline bg_r-trans text_bold'>" +
-                                "กฏที่ " + (j + 1) + " " +
-                                "</div><br/>";
-                        for (int i = 0; i < str.length; i++) {
-                            if (!str[i].equals("")) {
-                                if (i < str.length - 1) {
-                                    line += "<div class='inline bg_r-primary'> " + str[i] + " </div>";
-                                    line += "->";
-                                } else if (i < str.length) {
-                                    String[] nstr = str[i].split(":");
-                                    line += "<div class='inline bg_r-primary'> " + nstr[0] + " </div> ";
-                                    line += " <b>:</b> <div class='inline bg_r-alert'> " + nstr[1] + " </div> ";
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONArray js = new JSONArray(data);
+                            line += web_m.htmlHead(web_m.getCSS());
+                            ArrayList<String> as = getTreeVal(js);
+                            for (int j = 0; j < as.size(); j++) {
+                                String[] str = as.get(j).split(",");
+                                line += "<div class='div draw_node m-top-1'>" +
+                                        "<div class='inline bg_r-trans text_bold'>" +
+                                        "กฏที่ " + (j + 1) + " " +
+                                        "</div><br/>";
+                                for (int i = 0; i < str.length; i++) {
+                                    if (!str[i].equals("")) {
+                                        if (i < str.length - 1) {
+                                            line += "<div class='inline bg_r-primary'> " + str[i] + " </div>";
+                                            line += "->";
+                                        } else if (i < str.length) {
+                                            String[] nstr = str[i].split(":");
+                                            line += "<div class='inline bg_r-primary'> " + nstr[0] + " </div> ";
+                                            line += " <b>:</b> <div class='inline bg_r-alert'> " + nstr[1] + " </div> ";
+                                        }
+                                    }
                                 }
+                                line += "</div>";
                             }
+                            line += web_m.htmlFooter();
+                            webView.loadData(line, "text/html; charset='utf-8' ", null);
+                        } catch (Exception e) {
+                            Log.d("webview err", e.toString());
                         }
-                        line += "</div>";
                     }
-                    line += web_m.htmlFooter();
-                    webView.loadData(line, "text/html; charset='utf-8' ", null);
-                } catch (Exception e) {
-                    Log.d("webview err", e.toString());
-                }
+                });
             }
 
             @Override

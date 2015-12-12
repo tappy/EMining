@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 
 public class HeadClusterFragment extends Fragment {
     private View rootView;
-    private WebView cluster_head_web;
+    private WebView webView;
     private String webData;
     private GetClusterModelReq req, req2;
 
@@ -45,20 +46,13 @@ public class HeadClusterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_head_cluster, container, false);
-        cluster_head_web = (WebView) rootView.findViewById(R.id.cluster_head_web);
-        cluster_head_web.setWebViewClient(new WebViewClient());
-        WebSettings webSettings = cluster_head_web.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-
+        webView = (WebView) rootView.findViewById(R.id.cluster_head_web);
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.getSettings().setJavaScriptEnabled(true);
         req = new GetClusterModelReq();
         req.userId = new DatabaseManager(rootView.getContext()).getLoginId();
         req.param = "head";
         loadClusterContent(req);
-
-        req2 = new GetClusterModelReq();
-        req2.userId = new DatabaseManager(rootView.getContext()).getLoginId();
-        req2.param = "footer";
-        loadClusterContent(req2);
         return rootView;
     }
 
@@ -73,13 +67,17 @@ public class HeadClusterFragment extends Fragment {
                         try {
                             JSONArray js = new JSONArray(data);
                             if (req.param.equals("head")) {
-                                webData = "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head>" +
+                                webData = "<!Doctype html><head>" + new WebViewManager().getCSS() + "</head>" +
                                         "<body><table widht='100%' border=0>";
                                 for (int i = 0; i < js.length(); i++) {
                                     webData += "<tr>";
                                     webData += "<td>" + js.getString(i) + "</td>";
                                     webData += "</tr>";
                                 }
+                                req2 = new GetClusterModelReq();
+                                req2.userId = new DatabaseManager(rootView.getContext()).getLoginId();
+                                req2.param = "footer";
+                                loadClusterContent(req2);
                             } else {
                                 webData += "<tr>";
                                 webData += "<table widht='100%' border=0>";
@@ -105,7 +103,7 @@ public class HeadClusterFragment extends Fragment {
                                 webData += "</tbody></tr>";
                                 webData += "</table>";
                                 webData += "</table></body></html>";
-                                cluster_head_web.loadData(webData, "text/html; charset=UTF-8", null);
+                                webView.loadData(webData, "text/html; charset=UTF-8", null);
                             }
                         } catch (Exception e) {
                             Log.d("webview err", e.toString());

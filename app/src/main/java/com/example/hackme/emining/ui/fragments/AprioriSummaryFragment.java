@@ -1,13 +1,13 @@
 package com.example.hackme.emining.ui.fragments;
 
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -49,34 +49,38 @@ public class AprioriSummaryFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootview = inflater.inflate(R.layout.fragment_apriori_summary_frag, container, false);
-        webView=(WebView)rootview.findViewById(R.id.webView);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
-        aprioriProcessBar=(ProgressBar)rootview.findViewById(R.id.apriori_processBar);
+        webView = (WebView) rootview.findViewById(R.id.webView);
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.getSettings().setJavaScriptEnabled(true);
+        aprioriProcessBar = (ProgressBar) rootview.findViewById(R.id.apriori_processBar);
         aprioriProcessBar.setVisibility(View.INVISIBLE);
         req = new GetApioriModelReq();
         req.param = "summary";
         req.userId = new DatabaseManager(rootview.getContext()).getLoginId();
         new GetApioriModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try{
-                    JSONArray js=new JSONArray(data);
-                    String webData = "<!Doctype html><head>" + new WebViewManager(rootview).getCSS() + "</head>" +
-                            "<body><table widht='100%' border=0>";
-                    for(int i=0;i<js.length();i++){
-                        webData+="<tr>";
-                        if(i==3)webData+="<td><B>"+js.getString(i)+"</B></td>";
-                        else webData+="<td>"+js.getString(i)+"</td>";
-                        webData+="</tr>";
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONArray js = new JSONArray(data);
+                            String webData = "<!Doctype html><head>" + new WebViewManager().getCSS() + "</head>" +
+                                    "<body><table widht='100%' border=0>";
+                            for (int i = 0; i < js.length(); i++) {
+                                webData += "<tr>";
+                                if (i == 3) webData += "<td><B>" + js.getString(i) + "</B></td>";
+                                else webData += "<td>" + js.getString(i) + "</td>";
+                                webData += "</tr>";
+                            }
+                            webData += "</table></body></html>";
+                            webView.loadData(webData, "text/html; charset=UTF-8", null);
+                            aprioriProcessBar.setVisibility(View.INVISIBLE);
+                        } catch (Exception e) {
+                            Log.d("webview err", e.toString());
+                        }
                     }
-                    webData+="</table></body></html>";
-                    webView.loadData(webData,"text/html; charset=UTF-8",null);
-                    aprioriProcessBar.setVisibility(View.INVISIBLE);
-                }catch (Exception e){
-                    Log.d("webview err",e.toString());
-                }
+                });
             }
 
             @Override
@@ -87,8 +91,6 @@ public class AprioriSummaryFragment extends Fragment {
 
         return rootview;
     }
-
-
 
 
 }

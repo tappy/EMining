@@ -313,76 +313,81 @@ public class ViewModelFragment extends Fragment {
         progressDialog = ProgressDialog.show(rooview.getContext(), getString(R.string.processing), getString(R.string.please_wait), false, true);
         new AnalysysLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    JSONObject jsonObject1 = new JSONObject(data);
-                    if (jsonObject1.getInt("model") == 1) {
-                        if (jsonObject1.getInt("algorithm") == 0) {
-                            Intent cluster = new Intent(rooview.getContext(), ClusterModelView.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString("valueModel", "");
-                            bundle.putInt("class_count", Integer.parseInt(numCluster.getText().toString()));
-                            cluster.putExtras(bundle);
-                            startActivity(cluster);
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONObject jsonObject1 = new JSONObject(data);
+                            if (jsonObject1.getInt("model") == 1) {
+                                if (jsonObject1.getInt("algorithm") == 0) {
+                                    Intent cluster = new Intent(rooview.getContext(), ClusterModelView.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("valueModel", "");
+                                    bundle.putInt("class_count", Integer.parseInt(numCluster.getText().toString()));
+                                    cluster.putExtras(bundle);
+                                    startActivity(cluster);
 
-                        } else if (jsonObject1.getInt("algorithm") == 1) {
+                                } else if (jsonObject1.getInt("algorithm") == 1) {
 
-                            Intent cluster = new Intent(rooview.getContext(), TreeModelView.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString("valueModel", "");
-                            cluster.putExtras(bundle);
-                            startActivity(cluster);
+                                    Intent cluster = new Intent(rooview.getContext(), TreeModelView.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("valueModel", "");
+                                    cluster.putExtras(bundle);
+                                    startActivity(cluster);
 
-                        } else if (jsonObject1.getInt("algorithm") == 2) {
-                            Intent cluster = new Intent(rooview.getContext(), AprioriModelView.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString("valueModel", "");
-                            cluster.putExtras(bundle);
-                            startActivity(cluster);
+                                } else if (jsonObject1.getInt("algorithm") == 2) {
+                                    Intent cluster = new Intent(rooview.getContext(), AprioriModelView.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("valueModel", "");
+                                    cluster.putExtras(bundle);
+                                    startActivity(cluster);
 
-                        }
-                    } else if (jsonObject1.getInt("model") == 2) {
-                        AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
-                        al.setTitle("Error!");
-                        al.setIcon(android.R.drawable.ic_dialog_alert);
-                        switch (req.algorithm) {
-                            case "0":
-                                al.setMessage(getString(R.string.file_not_sup) + " Simple KMeans");
-                                break;
-                            case "1":
-                                al.setMessage(getString(R.string.file_not_sup) + " J48");
-                                break;
-                            case "2":
-                                al.setMessage(getString(R.string.file_not_sup) + " Apriori");
-                                break;
-                        }
-                        al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                                }
+                            } else if (jsonObject1.getInt("model") == 2) {
+                                AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
+                                al.setTitle("Error!");
+                                al.setIcon(android.R.drawable.ic_dialog_alert);
+                                switch (req.algorithm) {
+                                    case "0":
+                                        al.setMessage(getString(R.string.file_not_sup) + " Simple KMeans");
+                                        break;
+                                    case "1":
+                                        al.setMessage(getString(R.string.file_not_sup) + " J48");
+                                        break;
+                                    case "2":
+                                        al.setMessage(getString(R.string.file_not_sup) + " Apriori");
+                                        break;
+                                }
+                                al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
+                                    }
+                                });
+                                al.setCancelable(true);
+                                Dialog d = al.create();
+                                d.show();
+                            } else {
+                                AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
+                                al.setTitle("Error!");
+                                al.setIcon(android.R.drawable.ic_dialog_alert);
+                                al.setMessage(getString(R.string.ana_err));
+                                al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                                al.setCancelable(true);
+                                Dialog d = al.create();
+                                d.show();
                             }
-                        });
-                        al.setCancelable(true);
-                        Dialog d = al.create();
-                        d.show();
-                    } else {
-                        AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
-                        al.setTitle("Error!");
-                        al.setIcon(android.R.drawable.ic_dialog_alert);
-                        al.setMessage(getString(R.string.ana_err));
-                        al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                        al.setCancelable(true);
-                        Dialog d = al.create();
-                        d.show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                });
             }
 
             @Override

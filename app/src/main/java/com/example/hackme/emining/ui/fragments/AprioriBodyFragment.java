@@ -55,33 +55,38 @@ public class AprioriBodyFragment extends Fragment {
         req.param = "body";
         new GetApioriModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    JSONArray js = new JSONArray(data);
-                    arrayList = new ArrayList();
-                    HashMap<String, Object> hm;
-                    for (int i = 0; i < js.length(); i++) {
-                        hm = new HashMap<>();
-                        String[] sVal = js.getString(i).split("==>");
-                        hm.put("numRuled", "กฏที่ " + StringHelper.getNumRuled(sVal[0]).replace(".", ""));
-                        hm.put("val1", StringHelper.getPart1(sVal[0]).trim() + " ==> " + sVal[1].trim());
-                        arrayList.add(hm);
-                    }
-                    String[] from = new String[]{
-                            "numRuled",
-                            "val1"
-                    };
-                    int[] to = new int[]{
-                            R.id.numRuled,
-                            R.id.part1
-                    };
-                    int layout = R.layout.apriori_body_layout_list;
-                    adapter = new SimpleAdapter(rootview.getContext(), arrayList, layout, from, to);
-                    listView.setAdapter(adapter);
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONArray js = new JSONArray(data);
+                            arrayList = new ArrayList();
+                            HashMap<String, Object> hm;
+                            for (int i = 0; i < js.length(); i++) {
+                                hm = new HashMap<>();
+                                String[] sVal = js.getString(i).split("==>");
+                                hm.put("numRuled", "กฏที่ " + StringHelper.getNumRuled(sVal[0]).replace(".", ""));
+                                hm.put("val1", StringHelper.getPart1(sVal[0]).trim() + " ==> " + sVal[1].trim());
+                                arrayList.add(hm);
+                            }
+                            String[] from = new String[]{
+                                    "numRuled",
+                                    "val1"
+                            };
+                            int[] to = new int[]{
+                                    R.id.numRuled,
+                                    R.id.part1
+                            };
+                            int layout = R.layout.apriori_body_layout_list;
+                            adapter = new SimpleAdapter(rootview.getContext(), arrayList, layout, from, to);
+                            listView.setAdapter(adapter);
 
-                } catch (Exception e) {
-                    Log.d("Create listview err", e.toString());
-                }
+                        } catch (Exception e) {
+                            Log.d("Create listview err", e.toString());
+                        }
+                    }
+                });
             }
 
             @Override

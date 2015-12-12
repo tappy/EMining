@@ -70,7 +70,6 @@ public class ClusterBodyFragment extends Fragment {
                     public void run() {
                         try {
                             if (param.equals("body")) {
-
                                 listView = (ListView) rootView.findViewById(R.id.listView);
                                 JSONArray js = new JSONArray(data);
 

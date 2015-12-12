@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
 import com.example.hackme.emining.R;
@@ -16,7 +17,9 @@ import com.example.hackme.emining.entities.SummayLoaderReq;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.model.ModelLoader;
 import com.example.hackme.emining.model.SummaryLoader;
+
 import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 
@@ -47,7 +50,8 @@ public class TreeSummaryFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_tree_summary_frag, container, false);
         webView = (WebView) rootview.findViewById(R.id.tree_summary_web_wiew);
-
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.getSettings().setJavaScriptEnabled(true);
         SummayLoaderReq req = new SummayLoaderReq();
         req.userid = new DatabaseManager(rootview.getContext()).getLoginId();
         req.param = "summary";
@@ -61,7 +65,7 @@ public class TreeSummaryFragment extends Fragment {
             public void onLoaded(String data) {
                 try {
                     JSONArray js = new JSONArray(data);
-                    webData = "<!Doctype html><head>" + new WebViewManager(rootview).getCSS() + "</head>" +
+                    webData = "<!Doctype html><head>" + new WebViewManager().getCSS() + "</head>" +
                             "<body><table widht='100%' border=0>";
                     webData += getFirstSummary(js);
                     int seeCount = 0;

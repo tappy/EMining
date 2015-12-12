@@ -1,14 +1,10 @@
 package com.example.hackme.emining.Helpers;
 
-import android.view.View;
-
 public class WebViewManager {
 
     private String csscontent;
-    private View rootView;
 
-        public WebViewManager(View mview) {
-        rootView=mview;
+    public WebViewManager() {
         csscontent="<style>" +
                 "    table{" +
                 "        width: 100%;" +

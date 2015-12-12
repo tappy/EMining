@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -15,6 +16,7 @@ import com.example.hackme.emining.entities.SummayLoaderReq;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.model.ModelLoader;
 import com.example.hackme.emining.model.SummaryLoader;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class TreeTotalSummary extends Fragment {
 
     private View rootView;
     private WebView webView;
+    private String webData;
 
     public static TreeTotalSummary newInstance() {
         return new TreeTotalSummary();
@@ -42,9 +45,9 @@ public class TreeTotalSummary extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_tree_total_summary, container, false);
-        webView=(WebView)rootView.findViewById(R.id.tree_total_summary);
-        webView.setWebViewClient(new WebViewClient());
-
+        webView = (WebView) rootView.findViewById(R.id.tree_total_summary);
+        webView.setWebChromeClient(new WebChromeClient());
+        webView.getSettings().setJavaScriptEnabled(true);
         SummayLoaderReq req = new SummayLoaderReq();
         req.userid = new DatabaseManager(getActivity()).getLoginId();
         req.param = "summary";
@@ -55,26 +58,31 @@ public class TreeTotalSummary extends Fragment {
     public void loadSummary(SummayLoaderReq req) {
         new SummaryLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    JSONArray js=new JSONArray(data);
-                    data += "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head><body><div class='summary div'>";
-                    data+="<div class='div m-top-1' >&nbsp&nbsp&nbsp&nbspจากผลการวิเคราะห์ข้อมูลด้วยต้นไม้ตัดสินใจอัลกอริทึม J48 ได้ค่าต่างๆดังนี้</div>";
-                    for(int i=0;i<js.length();i++){
-                        String val= js.getString(i).replace("\n", "");
-                        if(val.equals("=== Stratified cross-validation ===")){
-                            ArrayList marr = getListData(js, getLine(js, "=== Stratified cross-validation ===", 1), getLine(js, "=== Confusion Matrix ===", 2) - 1);
-                            data+="<div class='m-top-1'>&nbsp</div><div class='div bg_r-base m-top-1 content_center' >ข้อมูล Stratified cross-validation </div>";
-                            data+=getErrorOnTrainingDataPer(marr);
-                        }else if(val.equals("=== Error on training data ===")){
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONArray js = new JSONArray(data);
+                            webData += "<!Doctype html><head>" + new WebViewManager().getCSS() + "</head><body><div class='summary div'>";
+                            webData += "<div class='div m-top-1' >&nbsp&nbsp&nbsp&nbspจากผลการวิเคราะห์ข้อมูลด้วยต้นไม้ตัดสินใจอัลกอริทึม J48 ได้ค่าต่างๆดังนี้</div>";
+                            for (int i = 0; i < js.length(); i++) {
+                                String val = js.getString(i).replace("\n", "");
+                                if (val.equals("=== Stratified cross-validation ===")) {
+                                    ArrayList marr = getListData(js, getLine(js, "=== Stratified cross-validation ===", 1), getLine(js, "=== Confusion Matrix ===", 2) - 1);
+                                    webData += "<div class='m-top-1'>&nbsp</div><div class='div bg_r-base m-top-1 content_center' >ข้อมูล Stratified cross-validation </div>";
+                                    webData += getErrorOnTrainingDataPer(marr);
+                                } else if (val.equals("=== Error on training data ===")) {
 
+                                }
+                            }
+                            webData += "</div></body></html>";
+                            webView.loadData(webData, "text/html; charset=UTF-8", null);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
                         }
                     }
-                    data+="</div></body></html>";
-                    webView.loadData(data,"text/html; charset=UTF-8",null);
-                }catch (Exception ex){
-                    ex.printStackTrace();
-                }
+                });
             }
 
             @Override
@@ -88,15 +96,13 @@ public class TreeTotalSummary extends Fragment {
         String wdata = "";
         for (int i = 1; i <= 2; i++) {
             String[] gData = getPart(list.get(i).trim(), 3);
-            if(i==1)
-            {
-                wdata+="<div class='div draw_node m-top-1' >ได้ค่า Correctly Classified Instances เท่ากับ "+gData[2].replace(" ","").trim()+" </div>";
-            }
-            else if(i==2){
-                wdata+="<div class='div draw_node m-top-1' >ค่า Incorrectly Classified Instances เท่ากับ "+gData[2].replace(" ","").trim()+" </div>";
+            if (i == 1) {
+                wdata += "<div class='div draw_node m-top-1' >ได้ค่า Correctly Classified Instances เท่ากับ " + gData[2].replace(" ", "").trim() + " </div>";
+            } else if (i == 2) {
+                wdata += "<div class='div draw_node m-top-1' >ค่า Incorrectly Classified Instances เท่ากับ " + gData[2].replace(" ", "").trim() + " </div>";
             }
         }
-        wdata+=getErrorOnTrainingDataBody(list);
+        wdata += getErrorOnTrainingDataBody(list);
         return wdata;
     }
 
@@ -104,7 +110,7 @@ public class TreeTotalSummary extends Fragment {
         String wdata = "";
         for (int i = 3; i < list.size(); i++) {
             String[] gData = getPart(list.get(i).trim(), 2);
-               wdata+= "<div class='div draw_node m-top-1' > ค่า "+gData[0]+" เท่ากับ "+gData[1]+"</div>";
+            wdata += "<div class='div draw_node m-top-1' > ค่า " + gData[0] + " เท่ากับ " + gData[1] + "</div>";
         }
         return wdata;
     }

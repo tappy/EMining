@@ -99,20 +99,25 @@ public class ClusterModelView extends AppCompatActivity {
         if (id == R.id.action_saveModel) {
             loadClusterContent(new ModelLoader.DataLoadingListener() {
                 @Override
-                public void onLoaded(String data) {
-                    try {
-                        jsModel = new JSONArray(data);
-                        for (int i = 0; i < jsModel.length() - 1; i++) {
-                            val += jsModel.getString(i);
+                public void onLoaded(final String data) {
+                    ClusterModelView.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                jsModel = new JSONArray(data);
+                                for (int i = 0; i < jsModel.length() - 1; i++) {
+                                    val += jsModel.getString(i);
+                                }
+                                Intent sendIntent = new Intent();
+                                sendIntent.setAction(Intent.ACTION_SEND);
+                                sendIntent.putExtra(Intent.EXTRA_TEXT, val);
+                                sendIntent.setType("text/plain");
+                                startActivity(sendIntent);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, val);
-                        sendIntent.setType("text/plain");
-                        startActivity(sendIntent);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+                    });
                 }
 
                 @Override
