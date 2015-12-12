@@ -5,16 +5,15 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.renderscript.Element;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,20 +30,24 @@ import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.ui.fragments.SettingFragment;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+public class MainPage extends AppCompatActivity {
 
-public class MainPage extends ActionBarActivity implements ActionBar.TabListener {
-
-    public ViewPager mViewPager;
     public static ProgressDialog progressDialog;
     public DatabaseManager dbms;
-    public int tabCelect = 0;
+    public int lastSelectPage = 0;
     private DatabaseManager dbm;
     private AlertDialog.Builder al;
     private long back_pressed;
     private PagerSlidingTabStrip tabs;
     private SectionsPagerAdapter sectionsPagerAdapter;
     private ViewPager pager;
+    public final Integer tempIconId[] = {R.drawable.ic_file_file_upload, R.drawable.ic_action_trending_up, R.drawable.ic_action_perm_identity};
+    public final Integer tempIconDarkId[] = {R.drawable.ic_action_file_file_upload, R.drawable.ic_action_action_trending_up, R.drawable.ic_action_social_person_outline};
+    public List<Integer> iconId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +59,22 @@ public class MainPage extends ActionBarActivity implements ActionBar.TabListener
             startActivity(intent);
         }
         setContentView(R.layout.activity_main_page);
-        final ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setStackedBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.actionbar_color));
-
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setTextColorResource(R.color.text_color);
+        tabs.setBackgroundResource(R.color.baseColor);
+        tabs.setIndicatorColorResource(R.color.baseColor);
+        iconId = new ArrayList<>(Arrays.asList(tempIconId));
+        iconId.set(0, tempIconDarkId[0]);
         sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(sectionsPagerAdapter);
         pager.setOffscreenPageLimit(5);
+        pager.setCurrentItem(0);
         tabs.setViewPager(pager);
+        getSupportActionBar().setTitle(sectionsPagerAdapter.getPageTitle(0));
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -75,7 +83,9 @@ public class MainPage extends ActionBarActivity implements ActionBar.TabListener
 
             @Override
             public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
+                getSupportActionBar().setTitle(sectionsPagerAdapter.getPageTitle(position));
+                onTabSelected(position);
+                tabs.notifyDataSetChanged();
             }
 
             @Override
@@ -83,13 +93,6 @@ public class MainPage extends ActionBarActivity implements ActionBar.TabListener
 
             }
         });
-
-        for (int i = 0; i < sectionsPagerAdapter.getCount(); i++) {
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setIcon(sectionsPagerAdapter.getIcon(i))
-                            .setTabListener(this));
-        }
 
         dbm = new DatabaseManager(this);
         al = new AlertDialog.Builder(this);
@@ -173,65 +176,20 @@ public class MainPage extends ActionBarActivity implements ActionBar.TabListener
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        pager.setCurrentItem(tab.getPosition());
-        if (tab.getPosition() == 1 && tabCelect < 1) {
+
+    public void onTabSelected(int position) {
+        pager.setCurrentItem(position);
+        if (position == 1 && lastSelectPage < 1) {
             Animation animation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.showing);
             ImageButton imageButton = (ImageButton) findViewById(R.id.imageButton2);
             imageButton.startAnimation(animation);
         }
-        tabCelect = tab.getPosition();
-        int tabs = tab.getPosition();
-        if (tabs == 0) {
-            tab.setIcon(R.drawable.ic_action_file_file_upload);
-        } else if (tabs == 1) {
-            tab.setIcon(R.drawable.ic_action_action_trending_up);
-        } else {
-            tab.setIcon(R.drawable.ic_action_social_person_outline);
-        }
-
-        switch (tab.getPosition()) {
-            case 0:
-                getSupportActionBar().setTitle(R.string.title_section1);
-                break;
-            case 1: {
-                getSupportActionBar().setTitle(R.string.title_section2);
-            }
-            break;
-            case 2:
-                getSupportActionBar().setTitle(R.string.title_section3);
-                break;
-            default:
-                getSupportActionBar().setTitle(R.string.title_section1);
-        }
+        iconId.set(position, tempIconDarkId[position]);
+        iconId.set(lastSelectPage, tempIconId[lastSelectPage]);
+        lastSelectPage = position;
     }
 
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        int tabs = tab.getPosition();
-        if (tabs == 0) {
-            tab.setIcon(R.drawable.ic_file_file_upload);
-        } else if (tabs == 1) {
-            tab.setIcon(R.drawable.ic_action_trending_up);
-        } else {
-            tab.setIcon(R.drawable.ic_action_perm_identity);
-        }
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        int tabs = tab.getPosition();
-        if (tabs == 0) {
-            tab.setIcon(R.drawable.ic_action_file_file_upload);
-        } else if (tabs == 1) {
-            tab.setIcon(R.drawable.ic_action_action_trending_up);
-        } else {
-            tab.setIcon(R.drawable.ic_action_social_person_outline);
-        }
-    }
-
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.IconTabProvider {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -254,7 +212,6 @@ public class MainPage extends ActionBarActivity implements ActionBar.TabListener
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 3;
         }
 
@@ -268,20 +225,13 @@ public class MainPage extends ActionBarActivity implements ActionBar.TabListener
                 case 2:
                     return getString(R.string.title_section3);
                 default:
-                    return "";
+                    return getString(R.string.title_section3);
             }
         }
 
-        public Drawable getIcon(int position) {
-            switch (position) {
-                case 0:
-                    return getResources().getDrawable(R.drawable.ic_file_file_upload);
-                case 1:
-                    return getResources().getDrawable(R.drawable.ic_action_trending_up);
-                case 2:
-                    return getResources().getDrawable(R.drawable.ic_action_perm_identity);
-            }
-            return null;
+        @Override
+        public int getPageIconResId(int position) {
+            return iconId.get(position);
         }
     }
 }
