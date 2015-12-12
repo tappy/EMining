@@ -10,6 +10,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.example.hackme.emining.R;
 import com.example.hackme.emining.entities.GetClusterModelReq;
@@ -26,6 +27,7 @@ public class HeadClusterFragment extends Fragment {
     private View rootView;
     private WebView webView;
     private String webData;
+    private ProgressBar progressBar;
     private GetClusterModelReq req, req2;
 
     public static HeadClusterFragment newInstance() {
@@ -46,6 +48,8 @@ public class HeadClusterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_head_cluster, container, false);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.process);
+        progressBar.setVisibility(View.VISIBLE);
         webView = (WebView) rootView.findViewById(R.id.cluster_head_web);
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
@@ -79,6 +83,7 @@ public class HeadClusterFragment extends Fragment {
                                 req2.param = "footer";
                                 loadClusterContent(req2);
                             } else {
+                                progressBar.setVisibility(View.INVISIBLE);
                                 webData += "<tr>";
                                 webData += "<table widht='100%' border=0>";
                                 for (int i = 0; i < js.length(); i++) {

@@ -24,7 +24,7 @@ public class SummaryFragment extends Fragment {
     private View rootView;
     private WebView webView;
     private String webData = "";
-    private ProgressBar cluster_process;
+    private ProgressBar progressBar;
 
     public static SummaryFragment newInstance() {
         return new SummaryFragment();
@@ -43,8 +43,8 @@ public class SummaryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_summary, container, false);
-        cluster_process = (ProgressBar) rootView.findViewById(R.id.cluster_process);
-        cluster_process.setVisibility(View.INVISIBLE);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.cluster_process);
+        progressBar.setVisibility(View.VISIBLE);
         webView = (WebView) rootView.findViewById(R.id.cluster_summary);
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
@@ -81,6 +81,7 @@ public class SummaryFragment extends Fragment {
                                         req2.param = "footer";
                                         getSummaryModel(req2);
                                     } else if (req.param.equals("footer")) {
+                                        progressBar.setVisibility(View.INVISIBLE);
                                         webData += "<div class='div m-top-1' > ซึ่งในการวิเคราะห์ได้ทำการจัดกลุ่มของข้อมูลได้เป็น " + (jsonArray.length() - 1) + " กลุ่มดังนี้</div>";
                                         for (int i = 1; i < jsonArray.length(); i++) {
                                             String[] v = jsonArray.getString(i).replaceAll("[(-)]+", " ").replaceAll(" +", " ").trim().split(" ");
@@ -88,7 +89,6 @@ public class SummaryFragment extends Fragment {
                                         }
                                         webData += "</div></body></html>";
                                         webView.loadData(webData, "text/html; charset=UTF-8", null);
-                                        cluster_process.setVisibility(View.INVISIBLE);
                                     }
                                 } catch (Exception ex) {
                                     ex.printStackTrace();

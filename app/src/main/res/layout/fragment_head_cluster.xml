@@ -13,4 +13,11 @@
         android:id="@+id/cluster_head_web"
         android:layout_gravity="center_horizontal" />
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/process"
+        android:layout_gravity="center" />
+
 </FrameLayout>
