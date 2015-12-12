@@ -18,6 +18,7 @@ import com.example.hackme.emining.entities.UpdateAccountReq;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.model.ModelLoader;
 import com.example.hackme.emining.model.UpdateAccountLoader;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -162,7 +163,7 @@ public class SettingFragment extends Fragment {
     }
 
     public void updateAccount(UpdateAccountReq req, byte type) {
-        ProgressDialog ps;
+        final ProgressDialog ps;
         ps = new ProgressDialog(rooView.getContext());
         ps.setTitle(getString(R.string.update));
         ps.setMessage(getString(R.string.update));
@@ -171,38 +172,49 @@ public class SettingFragment extends Fragment {
         req.updateType = String.valueOf(type);
         new UpdateAccountLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    JSONObject jsonObject = new JSONObject(data);
-                    if (jsonObject.getInt("result") == 1) {
-                        switch (jsonObject.getInt("type")) {
-                            case 0:
-                                dbms.upgradeSession("email", jsonObject.getString("userEmail"));
-                                emailEdit.setText(dbms.getSession()[3]);
-                                Toast.makeText(rooView.getContext(), getString(R.string.update_success), Toast.LENGTH_LONG).show();
-                                break;
-                            case 1:
-                                dbms.upgradeSession("username", jsonObject.getString("userName"));
-                                userNameEdit.setText(dbms.getSession()[2]);
-                                Toast.makeText(rooView.getContext(), getString(R.string.update_success), Toast.LENGTH_LONG).show();
-                                break;
-                            case 2:
-                                Toast.makeText(rooView.getContext(), getString(R.string.update_success), Toast.LENGTH_LONG).show();
-                                break;
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ps.dismiss();
+                            JSONObject jsonObject = new JSONObject(data);
+                            if (jsonObject.getInt("result") == 1) {
+                                switch (jsonObject.getInt("type")) {
+                                    case 0:
+                                        dbms.upgradeSession("email", jsonObject.getString("userEmail"));
+                                        emailEdit.setText(dbms.getSession()[3]);
+                                        Toast.makeText(rooView.getContext(), getString(R.string.update_success), Toast.LENGTH_LONG).show();
+                                        break;
+                                    case 1:
+                                        dbms.upgradeSession("username", jsonObject.getString("userName"));
+                                        userNameEdit.setText(dbms.getSession()[2]);
+                                        Toast.makeText(rooView.getContext(), getString(R.string.update_success), Toast.LENGTH_LONG).show();
+                                        break;
+                                    case 2:
+                                        Toast.makeText(rooView.getContext(), getString(R.string.update_success), Toast.LENGTH_LONG).show();
+                                        break;
+                                }
+                            } else if (jsonObject.getInt("result") == 0) {
+                                Toast.makeText(rooView.getContext(), getString(R.string.update_failed), Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(rooView.getContext(), getString(R.string.update_failed), Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } else if (jsonObject.getInt("result") == 0) {
-                        Toast.makeText(rooView.getContext(), getString(R.string.update_failed), Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(rooView.getContext(), getString(R.string.update_failed), Toast.LENGTH_LONG).show();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                });
             }
 
             @Override
             public void onFailed(String message) {
-
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ps.dismiss();
+                    }
+                });
             }
         });
 
