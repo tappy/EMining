@@ -52,11 +52,29 @@ public class ClusterModelView extends AppCompatActivity {
             tabs.setDividerColorResource(R.color.baseColorPlus);
             tabs.setBackgroundResource(R.color.baseColor);
             tabs.setTextColorResource(R.color.text_color);
+            tabs.setIndicatorHeight(8);
+            tabs.setIndicatorColorResource(R.color.baseColorPlus);
             ClusterPagerAdapter clusterPagerAdapter = new ClusterPagerAdapter(getSupportFragmentManager());
             pager = (ViewPager) findViewById(R.id.cluster_pager);
             pager.setAdapter(clusterPagerAdapter);
-            pager.setOffscreenPageLimit(5);
+            pager.setOffscreenPageLimit(clusterPagerAdapter.getCount());
             tabs.setViewPager(pager);
+            tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
         }
     }
 
