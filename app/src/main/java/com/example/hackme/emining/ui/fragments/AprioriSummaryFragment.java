@@ -3,7 +3,7 @@ package com.example.hackme.emining.ui.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,23 +14,13 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.example.hackme.emining.R;
+import com.example.hackme.emining.entities.GetApioriModelReq;
 import com.example.hackme.emining.model.DatabaseManager;
-import com.example.hackme.emining.Helpers.WebServiceConfig;
 import com.example.hackme.emining.Helpers.WebViewManager;
+import com.example.hackme.emining.model.GetApioriModelLoader;
+import com.example.hackme.emining.model.ModelLoader;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class AprioriSummaryFragment extends Fragment {
@@ -38,6 +28,7 @@ public class AprioriSummaryFragment extends Fragment {
     private View rootview;
     private WebView webView;
     private ProgressBar aprioriProcessBar;
+    private GetApioriModelReq req;
 
     public static AprioriSummaryFragment newInstance() {
         AprioriSummaryFragment fragment = new AprioriSummaryFragment();
@@ -64,63 +55,37 @@ public class AprioriSummaryFragment extends Fragment {
         webView.setWebViewClient(new WebViewClient());
         aprioriProcessBar=(ProgressBar)rootview.findViewById(R.id.apriori_processBar);
         aprioriProcessBar.setVisibility(View.INVISIBLE);
-
-        new loadSummary().execute(new DatabaseManager(rootview.getContext()).getLoginId(), "summary");
-        return rootview;
-    }
-
-    private class loadSummary extends AsyncTask<String, Void, String>{
-        @Override
-        protected void onPreExecute() {
-        aprioriProcessBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                StringBuilder builder = new StringBuilder();
-                HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(new WebServiceConfig().getHost("getAprioryModel.php"));
-                List<NameValuePair> list = new ArrayList<>();
-                list.add(new BasicNameValuePair("userid", params[0]));
-                list.add(new BasicNameValuePair("param", params[1]));
-                post.setEntity(new UrlEncodedFormEntity(list));
-                HttpResponse response = client.execute(post);
-                int code = response.getStatusLine().getStatusCode();
-                if (code == 200) {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        builder.append(line);
+        req = new GetApioriModelReq();
+        req.param = "summary";
+        req.userId = new DatabaseManager(rootview.getContext()).getLoginId();
+        new GetApioriModelLoader(req, new ModelLoader.DataLoadingListener() {
+            @Override
+            public void onLoaded(String data) {
+                try{
+                    JSONArray js=new JSONArray(data);
+                    String webData = "<!Doctype html><head>" + new WebViewManager(rootview).getCSS() + "</head>" +
+                            "<body><table widht='100%' border=0>";
+                    for(int i=0;i<js.length();i++){
+                        webData+="<tr>";
+                        if(i==3)webData+="<td><B>"+js.getString(i)+"</B></td>";
+                        else webData+="<td>"+js.getString(i)+"</td>";
+                        webData+="</tr>";
                     }
+                    webData+="</table></body></html>";
+                    webView.loadData(webData,"text/html; charset=UTF-8",null);
+                    aprioriProcessBar.setVisibility(View.INVISIBLE);
+                }catch (Exception e){
+                    Log.d("webview err",e.toString());
                 }
-                Log.d("res", builder.toString());
-                return builder.toString();
-            } catch (Exception e) {
-                return null;
             }
-        }
 
-        @Override
-        protected void onPostExecute(String aVoid) {
-            //Toast.makeText(rootview.getContext(), aVoid, Toast.LENGTH_SHORT).show();
-            try{
-                JSONArray js=new JSONArray(aVoid);
-                String webData = "<!Doctype html><head>" + new WebViewManager(rootview).getCSS() + "</head>" +
-                        "<body><table widht='100%' border=0>";
-                for(int i=0;i<js.length();i++){
-                    webData+="<tr>";
-                    if(i==3)webData+="<td><B>"+js.getString(i)+"</B></td>";
-                    else webData+="<td>"+js.getString(i)+"</td>";
-                    webData+="</tr>";
-                }
-                webData+="</table></body></html>";
-                webView.loadData(webData,"text/html; charset=UTF-8",null);
-                aprioriProcessBar.setVisibility(View.INVISIBLE);
-            }catch (Exception e){
-             Log.d("webview err",e.toString());
+            @Override
+            public void onFailed(String message) {
+
             }
-        }
+        });
+
+        return rootview;
     }
 
 

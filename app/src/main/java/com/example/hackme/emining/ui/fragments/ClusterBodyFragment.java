@@ -1,10 +1,7 @@
 package com.example.hackme.emining.ui.fragments;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,33 +9,29 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.example.hackme.emining.R;
+import com.example.hackme.emining.entities.GetClusterModelReq;
 import com.example.hackme.emining.model.DatabaseManager;
-import com.example.hackme.emining.Helpers.WebServiceConfig;
+import com.example.hackme.emining.model.GetClusterModelLoader;
+import com.example.hackme.emining.model.ModelLoader;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ClusterBodyFragment extends Fragment {
     private View rootView;
     private ListView listView;
+    private static String COL = "COL";
+    private static String PARAM = "PARAM";
+    private String param;
+    private int col;
 
     public static ClusterBodyFragment newInstance(String param, int col) {
         ClusterBodyFragment fragment = new ClusterBodyFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("param", param);
-        bundle.putInt("col", col);
+        bundle.putString(PARAM, param);
+        bundle.putInt(COL, col);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -50,67 +43,33 @@ public class ClusterBodyFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            param = getArguments().getString(PARAM);
+            col = getArguments().getInt(COL);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_cluster_body, container, false);
-        if (getArguments() != null) {
-            Log.d("getArg", getArguments().getString("param"));
-            loadClusterContent(getArguments().getString("param"), getArguments().getInt("col"));
-        } else {
-            Log.d("getArgNull", "ArgNull");
-        }
+
+        GetClusterModelReq req = new GetClusterModelReq();
+        req.userId = new DatabaseManager(rootView.getContext()).getLoginId();
+        req.param = param;
+        getClustermodel(req);
         return rootView;
     }
 
-    public void loadClusterContent(final String loadParam, final int col) {
-        new AsyncTask<String, Void, String[]>() {
-            ProgressDialog progressDialog;
-
+    public void getClustermodel(GetClusterModelReq req) {
+        new GetClusterModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            protected void onPreExecute() {
-                progressDialog = ProgressDialog.show(rootView.getContext(), "Loading", "Loading content...", false, true);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setIcon(android.R.drawable.stat_sys_download);
-            }
-
-            @Override
-            protected String[] doInBackground(String... params) {
+            public void onLoaded(String data) {
                 try {
-                    StringBuilder builder = new StringBuilder();
-                    HttpClient client = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(new WebServiceConfig().getHost("getClusterModel.php"));
-                    List<NameValuePair> list = new ArrayList<NameValuePair>();
-                    list.add(new BasicNameValuePair("getParam", params[0]));
-                    list.add(new BasicNameValuePair("userid", params[1]));
-                    post.setEntity(new UrlEncodedFormEntity(list));
-                    HttpResponse response = client.execute(post);
-                    int code = response.getStatusLine().getStatusCode();
-                    if (code == 200) {
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            builder.append(line);
-                        }
-                    }
-                    Log.d("res", builder.toString());
-                    String[] ret = {builder.toString(), params[0]};
-                    return ret;
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(String[] s) {
-                progressDialog.dismiss();
-                try {
-                    if (s[1].equals("body")) {
+                    if (param.equals("body")) {
 
                         listView = (ListView) rootView.findViewById(R.id.listView);
-                        JSONArray js = new JSONArray(s[0]);
+                        JSONArray js = new JSONArray(data);
 
                         HashMap<String, Object> hm;
                         ArrayList arrayList = new ArrayList();
@@ -134,6 +93,11 @@ public class ClusterBodyFragment extends Fragment {
                 }
             }
 
-        }.execute(loadParam, new DatabaseManager(rootView.getContext()).getLoginId());
+            @Override
+            public void onFailed(String message) {
+
+            }
+        });
     }
+
 }

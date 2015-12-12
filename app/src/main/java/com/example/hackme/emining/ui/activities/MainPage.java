@@ -1,19 +1,20 @@
 package com.example.hackme.emining.ui.activities;
 
-import android.app.Activity;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,18 +23,18 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.example.hackme.emining.R;
 import com.example.hackme.emining.ui.fragments.ViewModelFragment;
-import com.example.hackme.emining.model.DataManager;
+import com.example.hackme.emining.ui.fragments.DataManagerFragment;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.ui.fragments.SettingFragment;
 
 import java.lang.reflect.Method;
 
 
-public class MainPage extends Activity implements ActionBar.TabListener {
+public class MainPage extends ActionBarActivity implements ActionBar.TabListener {
 
-    public SectionsPagerAdapter mSectionsPagerAdapter;
     public ViewPager mViewPager;
     public static ProgressDialog progressDialog;
     public DatabaseManager dbms;
@@ -41,6 +42,9 @@ public class MainPage extends Activity implements ActionBar.TabListener {
     private DatabaseManager dbm;
     private AlertDialog.Builder al;
     private long back_pressed;
+    private PagerSlidingTabStrip tabs;
+    private SectionsPagerAdapter sectionsPagerAdapter;
+    private ViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,29 +56,38 @@ public class MainPage extends Activity implements ActionBar.TabListener {
             startActivity(intent);
         }
         setContentView(R.layout.activity_main_page);
-        final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setStackedBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_color));
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setStackedBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.actionbar_color));
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(sectionsPagerAdapter);
+        pager.setOffscreenPageLimit(5);
+        tabs.setViewPager(pager);
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOffscreenPageLimit(4);
+            }
 
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
             }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
         });
 
-
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+        for (int i = 0; i < sectionsPagerAdapter.getCount(); i++) {
             actionBar.addTab(
                     actionBar.newTab()
-                            .setIcon(mSectionsPagerAdapter.getIcon(i))
+                            .setIcon(sectionsPagerAdapter.getIcon(i))
                             .setTabListener(this));
         }
 
@@ -85,14 +98,13 @@ public class MainPage extends Activity implements ActionBar.TabListener {
 
     public void forceTabs() {
         try {
-            final ActionBar actionBar = getActionBar();
+            final ActionBar actionBar = getSupportActionBar();
             final Method setHasEmbeddedTabsMethod = actionBar.getClass()
                     .getDeclaredMethod("setHasEmbeddedTabs", boolean.class);
             setHasEmbeddedTabsMethod.setAccessible(true);
             setHasEmbeddedTabsMethod.invoke(actionBar, false);
-        }
-        catch(final Exception e) {
-            Log.e("Handle issues","Handle issues");
+        } catch (final Exception e) {
+            Log.e("Handle issues", "Handle issues");
         }
     }
 
@@ -163,58 +175,58 @@ public class MainPage extends Activity implements ActionBar.TabListener {
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        mViewPager.setCurrentItem(tab.getPosition());
+        pager.setCurrentItem(tab.getPosition());
         if (tab.getPosition() == 1 && tabCelect < 1) {
             Animation animation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.showing);
             ImageButton imageButton = (ImageButton) findViewById(R.id.imageButton2);
             imageButton.startAnimation(animation);
         }
         tabCelect = tab.getPosition();
-        int tabs=tab.getPosition();
-        if(tabs==0){
+        int tabs = tab.getPosition();
+        if (tabs == 0) {
             tab.setIcon(R.drawable.ic_action_file_file_upload);
-        }else if(tabs==1){
+        } else if (tabs == 1) {
             tab.setIcon(R.drawable.ic_action_action_trending_up);
-        }else{
+        } else {
             tab.setIcon(R.drawable.ic_action_social_person_outline);
         }
 
         switch (tab.getPosition()) {
             case 0:
-                getActionBar().setTitle(R.string.title_section1);
+                getSupportActionBar().setTitle(R.string.title_section1);
                 break;
             case 1: {
-                getActionBar().setTitle(R.string.title_section2);
+                getSupportActionBar().setTitle(R.string.title_section2);
             }
             break;
             case 2:
-                getActionBar().setTitle(R.string.title_section3);
+                getSupportActionBar().setTitle(R.string.title_section3);
                 break;
             default:
-                getActionBar().setTitle(R.string.title_section1);
+                getSupportActionBar().setTitle(R.string.title_section1);
         }
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        int tabs=tab.getPosition();
-        if(tabs==0){
+        int tabs = tab.getPosition();
+        if (tabs == 0) {
             tab.setIcon(R.drawable.ic_file_file_upload);
-        }else if(tabs==1){
+        } else if (tabs == 1) {
             tab.setIcon(R.drawable.ic_action_trending_up);
-        }else{
+        } else {
             tab.setIcon(R.drawable.ic_action_perm_identity);
         }
     }
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        int tabs=tab.getPosition();
-        if(tabs==0){
+        int tabs = tab.getPosition();
+        if (tabs == 0) {
             tab.setIcon(R.drawable.ic_action_file_file_upload);
-        }else if(tabs==1){
+        } else if (tabs == 1) {
             tab.setIcon(R.drawable.ic_action_action_trending_up);
-        }else{
+        } else {
             tab.setIcon(R.drawable.ic_action_social_person_outline);
         }
     }
@@ -230,7 +242,7 @@ public class MainPage extends Activity implements ActionBar.TabListener {
 
             switch (position) {
                 case 0:
-                    return DataManager.newInstance();
+                    return DataManagerFragment.newInstance();
                 case 1:
                     return ViewModelFragment.newInstance();
                 case 2:

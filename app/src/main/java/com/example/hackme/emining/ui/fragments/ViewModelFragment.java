@@ -5,9 +5,8 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,29 +27,20 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 
 import com.example.hackme.emining.R;
+import com.example.hackme.emining.entities.AnalysysLoaderReq;
+import com.example.hackme.emining.model.AnalysysLoader;
+import com.example.hackme.emining.model.ModelLoader;
 import com.example.hackme.emining.ui.activities.TreeModelView;
-import com.example.hackme.emining.Helpers.WebServiceConfig;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.model.LoadDropDownData;
 import com.example.hackme.emining.ui.activities.AprioriModelView;
 import com.example.hackme.emining.ui.activities.ClusterModelView;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 
 public class ViewModelFragment extends Fragment {
 
@@ -84,7 +74,7 @@ public class ViewModelFragment extends Fragment {
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
         if (visible) {
-            new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
+            loadDropDownTable();
         }
     }
 
@@ -189,47 +179,51 @@ public class ViewModelFragment extends Fragment {
                                 } else {
                                     missing = "-M";
                                 }
-                                new loadAnalysys().execute(
-                                        hm.get("table").toString(),
-                                        String.valueOf(algorithm),
-                                        new DatabaseManager(rooview.getContext()).getLoginId(),
-                                        numCluster.getText().toString(),
-                                        iteria.getText().toString(), seed.getText().toString(),
-                                        missing);
+                                AnalysysLoaderReq req = new AnalysysLoaderReq();
+                                req.algorithm = String.valueOf(algorithm);
+                                req.tableName = hm.get("table").toString();
+                                req.userid = new DatabaseManager(rooview.getContext()).getLoginId();
+                                req.class_count = numCluster.getText().toString();
+                                req.max_iteria = iteria.getText().toString();
+                                req.seed = seed.getText().toString();
+                                req.missing_value = missing;
+                                loadAnalysys(req);
                             }
                             break;
                         case 1:
                             hm = (HashMap) spinner2.getSelectedItem();
                             if (!hm.get("table").toString().equals("ไม่มีข้อมูล")) {
-                                new loadAnalysys().execute(
-                                        hm.get("table").toString(),
-                                        String.valueOf(algorithm),
-                                        new DatabaseManager(rooview.getContext()).getLoginId(),
-                                        getSwitch(tree_1_binarySplit, " -B "),
-                                        getConfidentFactor(" -C " + tree_2_confidentFactor.getText().toString()),
-                                        " -M " + tree_4_minNumObj.getText().toString(),
-                                        getNumFold(" -N " + tree_5_numFolds.getText().toString()),
-                                        getSwitch(tree_6_reduceErrorPuning, " -R "),
-                                        getSeed(" -Q " + tree_8_treeSeed.getText().toString()),
-                                        getSubtree(),
-                                        getSwitch(tree_10_unPruned, " -U "),
-                                        getSwitch(tree_11_useLaplace, " -A "));
+                                AnalysysLoaderReq req = new AnalysysLoaderReq();
+                                req.algorithm = String.valueOf(algorithm);
+                                req.tableName = hm.get("table").toString();
+                                req.userid = new DatabaseManager(rooview.getContext()).getLoginId();
+                                req.binarySplit = getSwitch(tree_1_binarySplit, " -B ");
+                                req.confidentFactor = getConfidentFactor(" -C " + tree_2_confidentFactor.getText().toString());
+                                req.minNumObj = " -M " + tree_4_minNumObj.getText().toString();
+                                req.numFolds = getNumFold(" -N " + tree_5_numFolds.getText().toString());
+                                req.reduceErrorPuning = getSwitch(tree_6_reduceErrorPuning, " -R ");
+                                req.treeSeed = getSeed(" -Q " + tree_8_treeSeed.getText().toString());
+                                req.subTree = getSubtree();
+                                req.unPruned = getSwitch(tree_10_unPruned, " -U ");
+                                req.useLaplace = getSwitch(tree_11_useLaplace, " -A ");
+                                loadAnalysys(req);
                             }
                             break;
                         case 2:
                             hm = (HashMap) spinner3.getSelectedItem();
                             if (!hm.get("table").toString().equals("ไม่มีข้อมูล")) {
-                                new loadAnalysys().execute(
-                                        hm.get("table").toString(),
-                                        String.valueOf(algorithm),
-                                        new DatabaseManager(rooview.getContext()).getLoginId(),
-                                        apri0.getText().toString(),
-                                        apri1.getText().toString(),
-                                        apri2.getText().toString(),
-                                        apri3.getText().toString(),
-                                        apri4.getText().toString(),
-                                        apri5.getText().toString(),
-                                        apri6.getText().toString());
+                                AnalysysLoaderReq req = new AnalysysLoaderReq();
+                                req.algorithm = String.valueOf(algorithm);
+                                req.tableName = hm.get("table").toString();
+                                req.userid = new DatabaseManager(rooview.getContext()).getLoginId();
+                                req.classindex = apri0.getText().toString();
+                                req.delta = apri1.getText().toString();
+                                req.lowerBoundMinSupport = apri2.getText().toString();
+                                req.minMetric = apri3.getText().toString();
+                                req.numRules = apri4.getText().toString();
+                                req.significanceLevel = apri5.getText().toString();
+                                req.upperBoundMinSupport = apri6.getText().toString();
+                                loadAnalysys(req);
                             }
                             break;
                     }
@@ -239,7 +233,7 @@ public class ViewModelFragment extends Fragment {
             }
         });
 
-        new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
+        loadDropDownTable();
         return rooview;
     }
 
@@ -315,172 +309,111 @@ public class ViewModelFragment extends Fragment {
         dialog.show();
     }
 
-    class loadAnalysys extends AsyncTask<String, Void, String[]> {
+    public void loadAnalysys(final AnalysysLoaderReq req) {
+        progressDialog = ProgressDialog.show(rooview.getContext(), getString(R.string.processing), getString(R.string.please_wait), false, true);
+        new AnalysysLoader(req, new ModelLoader.DataLoadingListener() {
+            @Override
+            public void onLoaded(String data) {
+                try {
+                    JSONObject jsonObject1 = new JSONObject(data);
+                    if (jsonObject1.getInt("model") == 1) {
+                        if (jsonObject1.getInt("algorithm") == 0) {
+                            Intent cluster = new Intent(rooview.getContext(), ClusterModelView.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("valueModel", "");
+                            bundle.putInt("class_count", Integer.parseInt(numCluster.getText().toString()));
+                            cluster.putExtras(bundle);
+                            startActivity(cluster);
 
-        @Override
-        protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(rooview.getContext(), getString(R.string.processing), getString(R.string.please_wait), false, true);
-        }
+                        } else if (jsonObject1.getInt("algorithm") == 1) {
 
-        @Override
-        protected String[] doInBackground(String... params) {
-            StringBuilder builder = new StringBuilder();
-            try {
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                HttpPost post = new HttpPost(new WebServiceConfig().getHost("analysysModel.php"));
-                HttpClient client = new DefaultHttpClient();
-                List<NameValuePair> list = new ArrayList<>();
+                            Intent cluster = new Intent(rooview.getContext(), TreeModelView.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("valueModel", "");
+                            cluster.putExtras(bundle);
+                            startActivity(cluster);
 
-                list.add(new BasicNameValuePair("tableName", params[0]));
-                list.add(new BasicNameValuePair("algorithm", params[1]));
-                list.add(new BasicNameValuePair("userid", params[2]));
-
-                switch (params[1]) {
-                    case "0":
-                        list.add(new BasicNameValuePair("class_count", params[3]));
-                        list.add(new BasicNameValuePair("max_iteria", params[4]));
-                        list.add(new BasicNameValuePair("seed", params[5]));
-                        list.add(new BasicNameValuePair("missing_value", params[6]));
-                        break;
-                    case "1":
-                        list.add(new BasicNameValuePair("binarySplit", params[3]));
-                        list.add(new BasicNameValuePair("confidentFactor", params[4]));
-                        list.add(new BasicNameValuePair("minNumObj", params[5]));
-                        list.add(new BasicNameValuePair("numFolds", params[6]));
-                        list.add(new BasicNameValuePair("reduceErrorPuning", params[7]));
-                        list.add(new BasicNameValuePair("treeSeed", params[8]));
-                        list.add(new BasicNameValuePair("subTree", params[9]));
-                        list.add(new BasicNameValuePair("unPruned", params[10]));
-                        list.add(new BasicNameValuePair("useLaplace", params[11]));
-
-                        break;
-                    case "2":
-                        list.add(new BasicNameValuePair("classindex", params[3]));
-                        list.add(new BasicNameValuePair("delta", params[4]));
-                        list.add(new BasicNameValuePair("lowerBoundMinSupport", params[5]));
-                        list.add(new BasicNameValuePair("minMetric", params[6]));
-                        list.add(new BasicNameValuePair("numRules", params[7]));
-                        list.add(new BasicNameValuePair("significanceLevel", params[8]));
-                        list.add(new BasicNameValuePair("upperBoundMinSupport", params[9]));
-                        break;
-                }
-
-                post.setEntity(new UrlEncodedFormEntity(list));
-                HttpResponse response = client.execute(post);
-                if (response.getStatusLine().getStatusCode() == 200) {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        builder.append(line);
-                    }
-                } else {
-                    builder.append("0");
-                }
-                String[] rval = new String[2];
-                rval[0] = params[1];
-                rval[1] = builder.toString();
-                return rval;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String[] s) {
-            progressDialog.dismiss();
-            try {
-                JSONObject jsonObject1 = new JSONObject(s[1]);
-                if (jsonObject1.getInt("model") == 1) {
-                    if (jsonObject1.getInt("algorithm") == 0) {
-                        Intent cluster = new Intent(rooview.getContext(), ClusterModelView.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("valueModel","");
-                        bundle.putInt("class_count", Integer.parseInt(numCluster.getText().toString()));
-                        cluster.putExtras(bundle);
-                        startActivity(cluster);
-
-                    } else if (jsonObject1.getInt("algorithm") == 1) {
-
-                        Intent cluster = new Intent(rooview.getContext(), TreeModelView.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("valueModel","");
-                        cluster.putExtras(bundle);
-                        startActivity(cluster);
-
-                    } else if (jsonObject1.getInt("algorithm") == 2) {
-                        Intent cluster = new Intent(rooview.getContext(), AprioriModelView.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("valueModel","");
-                        cluster.putExtras(bundle);
-                        startActivity(cluster);
-
-                    }
-                } else if (jsonObject1.getInt("model") == 2) {
-                    AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
-                    al.setTitle("Error!");
-                    al.setIcon(android.R.drawable.ic_dialog_alert);
-                    switch (s[0]) {
-                        case "0":
-                            al.setMessage(getString(R.string.file_not_sup) + " Simple KMeans");
-                            break;
-                        case "1":
-                            al.setMessage(getString(R.string.file_not_sup) + " J48");
-                            break;
-                        case "2":
-                            al.setMessage(getString(R.string.file_not_sup) + " Apriori");
-                            break;
-                    }
-                    al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        } else if (jsonObject1.getInt("algorithm") == 2) {
+                            Intent cluster = new Intent(rooview.getContext(), AprioriModelView.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("valueModel", "");
+                            cluster.putExtras(bundle);
+                            startActivity(cluster);
 
                         }
-                    });
-                    al.setCancelable(true);
-                    Dialog d = al.create();
-                    d.show();
-                } else {
-                    AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
-                    al.setTitle("Error!");
-                    al.setIcon(android.R.drawable.ic_dialog_alert);
-                    al.setMessage(getString(R.string.ana_err));
-                    al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
+                    } else if (jsonObject1.getInt("model") == 2) {
+                        AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
+                        al.setTitle("Error!");
+                        al.setIcon(android.R.drawable.ic_dialog_alert);
+                        switch (req.algorithm) {
+                            case "0":
+                                al.setMessage(getString(R.string.file_not_sup) + " Simple KMeans");
+                                break;
+                            case "1":
+                                al.setMessage(getString(R.string.file_not_sup) + " J48");
+                                break;
+                            case "2":
+                                al.setMessage(getString(R.string.file_not_sup) + " Apriori");
+                                break;
                         }
-                    });
-                    al.setCancelable(true);
-                    Dialog d = al.create();
-                    d.show();
+                        al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        al.setCancelable(true);
+                        Dialog d = al.create();
+                        d.show();
+                    } else {
+                        AlertDialog.Builder al = new AlertDialog.Builder(rooview.getContext());
+                        al.setTitle("Error!");
+                        al.setIcon(android.R.drawable.ic_dialog_alert);
+                        al.setMessage(getString(R.string.ana_err));
+                        al.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        al.setCancelable(true);
+                        Dialog d = al.create();
+                        d.show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
+
+            @Override
+            public void onFailed(String message) {
+
+            }
+        });
+        progressDialog.dismiss();
     }
 
-    public class loadDropDownTable extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            progressBardropdown.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                return new LoadDropDownData().loading(new DatabaseManager(getActivity().getApplicationContext()).getLoginId());
-            } catch (Exception e) {
-                return null;
+    public void loadDropDownTable() {
+        new LoadDropDownData().loading(new DatabaseManager(getActivity()).getLoginId(), new ModelLoader.DataLoadingListener() {
+            @Override
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!data.equals("false")) {
+                            creatSpiner(data);
+                        }else {
+                            progressBardropdown.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
             }
-        }
 
-        @Override
-        protected void onPostExecute(String s) {
-            progressBardropdown.setVisibility(View.INVISIBLE);
-            creatSpiner(s);
-        }
+            @Override
+            public void onFailed(String message) {
+
+            }
+        });
     }
 
     public void creatSpiner(String s) {
@@ -514,7 +447,7 @@ public class ViewModelFragment extends Fragment {
             spinner.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
+                    loadDropDownTable();
                     return false;
                 }
             });
@@ -522,7 +455,7 @@ public class ViewModelFragment extends Fragment {
             spinner2.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
+                    loadDropDownTable();
                     return false;
                 }
             });
@@ -530,7 +463,7 @@ public class ViewModelFragment extends Fragment {
             spinner3.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    new loadDropDownTable().execute(new DatabaseManager(rooview.getContext()).getLoginId());
+                    loadDropDownTable();
                     return false;
                 }
             });

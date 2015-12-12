@@ -1,8 +1,7 @@
 package com.example.hackme.emining.ui.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,32 +11,23 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.hackme.emining.R;
+import com.example.hackme.emining.entities.GetClusterModelReq;
 import com.example.hackme.emining.model.DatabaseManager;
-import com.example.hackme.emining.Helpers.WebServiceConfig;
 import com.example.hackme.emining.Helpers.WebViewManager;
+import com.example.hackme.emining.model.GetClusterModelLoader;
+import com.example.hackme.emining.model.ModelLoader;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
 public class HeadClusterFragment extends Fragment {
     private View rootView;
     private WebView cluster_head_web;
     private String webData;
+    private GetClusterModelReq req, req2;
 
     public static HeadClusterFragment newInstance() {
-        HeadClusterFragment fragment = new HeadClusterFragment();
-        return fragment;
+        return new HeadClusterFragment();
     }
 
     public HeadClusterFragment() {
@@ -59,53 +49,26 @@ public class HeadClusterFragment extends Fragment {
         WebSettings webSettings = cluster_head_web.getSettings();
         webSettings.setJavaScriptEnabled(true);
 
-        loadClusterContent("head");
-        loadClusterContent("footer");
+        req = new GetClusterModelReq();
+        req.userId = new DatabaseManager(rootView.getContext()).getLoginId();
+        req.param = "head";
+        loadClusterContent(req);
+
+        req2 = new GetClusterModelReq();
+        req2.userId = new DatabaseManager(rootView.getContext()).getLoginId();
+        req2.param = "footer";
+        loadClusterContent(req2);
         return rootView;
     }
 
-    public void loadClusterContent(String loadParam) {
-        new AsyncTask<String, Void, String[]>() {
-            @Override
-            protected void onPreExecute() {
+    public void loadClusterContent(final GetClusterModelReq req) {
 
-            }
-
+        new GetClusterModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            protected String[] doInBackground(String... params) {
+            public void onLoaded(String data) {
                 try {
-                    StringBuilder builder = new StringBuilder();
-                    HttpClient client = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(new WebServiceConfig().getHost("getClusterModel.php"));
-                    List<NameValuePair> list = new ArrayList<NameValuePair>();
-                    list.add(new BasicNameValuePair("getParam", params[0]));
-                    list.add(new BasicNameValuePair("userid", params[1]));
-                    post.setEntity(new UrlEncodedFormEntity(list));
-                    HttpResponse response = client.execute(post);
-                    int code = response.getStatusLine().getStatusCode();
-                    if (code == 200) {
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            builder.append(line);
-                        }
-                    }
-                    Log.d("res", builder.toString());
-                    String[] ret = {builder.toString(), params[0]};
-                    return ret;
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(String[] s) {
-
-                //Toast.makeText(getBaseContext(), s[0], Toast.LENGTH_SHORT).show();
-
-                try {
-                    JSONArray js = new JSONArray(s[0]);
-                    if (s[1] == "head") {
+                    JSONArray js = new JSONArray(data);
+                    if (req.param.equals("head")) {
                         webData = "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head>" +
                                 "<body><table widht='100%' border=0>";
                         for (int i = 0; i < js.length(); i++) {
@@ -128,10 +91,10 @@ public class HeadClusterFragment extends Fragment {
                                         "</tr></thead><tbody>";
                             } else {
                                 webData += "<tr>";
-                                ArrayList<String> marr=getClusterHeadTable(js.getString(i).toString());
+                                ArrayList<String> marr = getClusterHeadTable(js.getString(i).toString());
                                 webData += "<td align='center' >" + marr.get(0) + "</td>";
                                 webData += "<td align='center' >" + marr.get(1) + "</td>";
-                                webData += "<td align='center' >" + marr.get(2).replaceAll("[(-)]+","") + "</td>";
+                                webData += "<td align='center' >" + marr.get(2).replaceAll("[(-)]+", "") + "</td>";
                                 webData += "</tr>";
                             }
                         }
@@ -145,26 +108,29 @@ public class HeadClusterFragment extends Fragment {
                 }
             }
 
-        }.execute(loadParam, new DatabaseManager(rootView.getContext()).getLoginId());
+            @Override
+            public void onFailed(String message) {
 
+            }
+        });
     }
 
     private ArrayList getClusterHeadTable(String val) {
 
-        ArrayList<String> arr=new ArrayList<>();
+        ArrayList<String> arr = new ArrayList<>();
         String vx[] = val.split(" ");
-        for (int i = 0; i < vx.length; i++) {
-            if (!vx[i].equals("")) {
-            arr.add(vx[i]);
+        for (String aVx : vx) {
+            if (!aVx.equals("")) {
+                arr.add(aVx);
             }
         }
 
-        Log.d("Size Arr",arr.size()+"");
-        if(arr.size()>=4){
-            String temp=arr.get(2);
-          arr.add(2,(temp+arr.get(3)));
+        Log.d("Size Arr", arr.size() + "");
+        if (arr.size() >= 4) {
+            String temp = arr.get(2);
+            arr.add(2, (temp + arr.get(3)));
         }
-        Log.d("Size Arr",arr.size()+"");
+        Log.d("Size Arr", arr.size() + "");
         return arr;
     }
 

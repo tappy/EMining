@@ -7,9 +7,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,38 +19,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.hackme.emining.R;
-import com.example.hackme.emining.Helpers.WebServiceConfig;
+import com.example.hackme.emining.entities.RegisterReq;
+import com.example.hackme.emining.model.ModelLoader;
+import com.example.hackme.emining.model.RegisterLoader;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
-
-public class RegisterActivity extends Activity {
+public class RegisterActivity extends AppCompatActivity {
 
     public EditText usemail, usname, uspass;
     public String mstruser, mstrpass, mstremail;
     public ProgressDialog progressDialog;
-    public StringBuilder stringBuilder;
     public Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        getActionBar().hide();
+        getSupportActionBar().hide();
         context = getBaseContext();
         usname = (EditText) findViewById(R.id.userName);
         uspass = (EditText) findViewById(R.id.userPassword);
@@ -58,7 +46,7 @@ public class RegisterActivity extends Activity {
         uspass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId== EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     saveAction(uspass);
                 }
                 return false;
@@ -68,11 +56,15 @@ public class RegisterActivity extends Activity {
 
     public void saveAction(View v) {
         if (checkinputregister()) {
-            new register().execute(getmStruser(), getmStrpass(), getmStremail());
+            RegisterReq req = new RegisterReq();
+            req.user = getmStruser();
+            req.email = getmStremail();
+            req.password = getmStrpass();
+            register(req);
         }
     }
 
-    public void cancelRegis(View v){
+    public void cancelRegis(View v) {
         onBackPressed();
     }
 
@@ -130,26 +122,24 @@ public class RegisterActivity extends Activity {
     public boolean checkinputregister() {
         setValueInput();
         if (chkValue(getmStruser(), 6) && chkValue(getmStrpass(), 6)) {
-            if(isValidEmail(getmStremail())){
+            if (isValidEmail(getmStremail())) {
                 return true;
-            }else {
-                alertDialog("Error",getString(R.string.input_email_alert_text), "close");
+            } else {
+                alertDialog("Error", getString(R.string.input_email_alert_text), "close");
                 return false;
             }
         } else {
-            alertDialog("Error",getString(R.string.input_text_length_alert_text), "close");
+            alertDialog("Error", getString(R.string.input_text_length_alert_text), "close");
             return false;
         }
     }
 
-    public final static boolean isValidEmail(CharSequence target) {
-        if (target == null) return false;
-        else return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    public static boolean isValidEmail(CharSequence target) {
+        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
     public boolean chkValue(String val, int lenght) {
-        if (val.trim() == null) return false;
-        else return val.length() >= lenght;
+        return val.trim() != null && val.length() >= lenght;
     }
 
     public String getmStruser() {
@@ -187,7 +177,11 @@ public class RegisterActivity extends Activity {
         int id = item.getItemId();
         if (id == R.id.action_save) {
             if (checkinputregister()) {
-                new register().execute(getmStruser(), getmStrpass(), getmStremail());
+                RegisterReq req = new RegisterReq();
+                req.user = getmStruser();
+                req.email = getmStremail();
+                req.password = getmStrpass();
+                register(req);
             }
         } else if (id == android.R.id.home) {
             onBackPressed();
@@ -195,64 +189,37 @@ public class RegisterActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class register extends AsyncTask<String, Void, Boolean> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showDialog(0);
-        }
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            stringBuilder = new StringBuilder();
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(new WebServiceConfig().getHost("register.php"));
-                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
-                params1.add(new BasicNameValuePair("user", params[0]));
-                params1.add(new BasicNameValuePair("password", params[1]));
-                params1.add(new BasicNameValuePair("email", params[2]));
-                httpPost.setEntity(new UrlEncodedFormEntity(params1));
-                HttpResponse response = client.execute(httpPost);
-                if (response.getStatusLine().getStatusCode() == 200) {
-                    InputStream inputStream = response.getEntity().getContent();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line);
-                    }
-                }
-                Log.d("res", stringBuilder.toString());
-                return true;
-            } catch (Exception e) {
-                Log.e("err", e.toString());
-                return false;
+    public void register(RegisterReq req) {
+        new RegisterLoader(req, new ModelLoader.DataLoadingListener() {
+            @Override
+            public void onLoaded(final String data) {
+               RegisterActivity.this.runOnUiThread(new Runnable() {
+                   @Override
+                   public void run() {
+                       try {
+                           JSONObject jsonObject = new JSONObject(data);
+                           if (jsonObject.getInt("status") == 1) {
+                               SuccessfulAlertDialog("Result", getString(R.string.res_regis_succ), "OK");
+                           } else if (jsonObject.getInt("status") == 2) {
+                               alertDialog("Result", getString(R.string.res_regis_exist), "Close");
+                           } else if (jsonObject.getInt("status") == 3) {
+                               alertDialog("Result", getString(R.string.res_regis_email_exist), "Close");
+                           } else if (jsonObject.getInt("status") == 4) {
+                               alertDialog("Result", getString(R.string.res_regis_user_and_email_exist), "Close");
+                           } else {
+                               alertDialog("Result", getString(R.string.res_regis_err), "Close");
+                           }
+                       } catch (JSONException e) {
+                           e.printStackTrace();
+                       }
+                   }
+               });
             }
-        }
 
-        @Override
-        protected void onPostExecute(Boolean v) {
-            super.onPostExecute(v);
-            removeDialog(0);
-            try {
-                JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-                if (jsonObject.getInt("status") == 1) {
-                    SuccessfulAlertDialog("Result", getString(R.string.res_regis_succ), "OK");
-                } else if (jsonObject.getInt("status") == 2) {
-                    alertDialog("Result", getString(R.string.res_regis_exist), "Close");
-                }else if(jsonObject.getInt("status") == 3){
-                    alertDialog("Result", getString(R.string.res_regis_email_exist), "Close");
-                }else if(jsonObject.getInt("status") == 4){
-                    alertDialog("Result", getString(R.string.res_regis_user_and_email_exist), "Close");
-                } else {
-                    alertDialog("Result", getString(R.string.res_regis_err), "Close");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            @Override
+            public void onFailed(String message) {
+
             }
-        }
-
+        });
     }
-
 }

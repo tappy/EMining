@@ -6,8 +6,8 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -19,32 +19,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.hackme.emining.R;
+import com.example.hackme.emining.entities.LoginReq;
+import com.example.hackme.emining.entities.ResetPasswordReq;
 import com.example.hackme.emining.model.DatabaseManager;
-import com.example.hackme.emining.Helpers.WebServiceConfig;
+import com.example.hackme.emining.model.LoginLoader;
+import com.example.hackme.emining.model.ModelLoader;
+import com.example.hackme.emining.model.ResetPasswordLoader;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
-public class LoginActivity extends Activity {
+public class LoginActivity extends AppCompatActivity {
     public ProgressDialog progressDialog;
     private EditText user, pass;
-    private TextView lose_pass;
     private AlertDialog.Builder aBuilder, builder;
     private RelativeLayout rel;
     private View rootView;
@@ -54,11 +41,11 @@ public class LoginActivity extends Activity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getActionBar().hide();
+        getSupportActionBar().hide();
 
 
         if (new DatabaseManager(getBaseContext()).existUser()) {
-            Intent red=new Intent(getBaseContext(),MainPage.class);
+            Intent red = new Intent(getBaseContext(), MainPage.class);
             startActivity(red);
         }
 
@@ -76,7 +63,7 @@ public class LoginActivity extends Activity {
         aBuilder = new AlertDialog.Builder(this);
         builder = new AlertDialog.Builder(this);
         rel = (RelativeLayout) findViewById(R.id.content);
-        lose_pass = (TextView) findViewById(R.id.lose_pass);
+        TextView lose_pass = (TextView) findViewById(R.id.lose_pass);
         lose_pass.setText(getString(R.string.lose_pass) + "?");
         lose_pass.setClickable(true);
         lose_pass.setOnClickListener(new View.OnClickListener() {
@@ -90,10 +77,7 @@ public class LoginActivity extends Activity {
                 aBuilder.setNegativeButton(getString(R.string.send_email), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (edem.getText().length() > 0) {
-                            resetPassword res = new resetPassword();
-                            res.execute(edem.getText().toString());
-                        }
+                        resetPassword(edem.getText().toString());
                     }
                 });
                 aBuilder.setPositiveButton(getString(R.string.closeBtn), null);
@@ -102,69 +86,43 @@ public class LoginActivity extends Activity {
         });
     }
 
-    public class resetPassword extends AsyncTask<String, Void, String> {
-        @Override
-        public void onPreExecute() {
-            showDialog(1);
-            Log.d("show", "show dialog");
-        }
-
-        @Override
-        public String doInBackground(String... params) {
-            try {
-                Log.d("do in background", "do in background");
-                StringBuilder builder = new StringBuilder();
-                HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(new WebServiceConfig().getHost("resetPassword.php"));
-                List<NameValuePair> list = new ArrayList();
-                list.add(new BasicNameValuePair("Email", params[0]));
-                post.setEntity(new UrlEncodedFormEntity(list));
-                HttpResponse response = client.execute(post);
-                int code = response.getStatusLine().getStatusCode();
-                if (code == 200) {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        builder.append(line);
+    public void resetPassword(String email) {
+        ResetPasswordReq req = new ResetPasswordReq();
+        req.email = email;
+        new ResetPasswordLoader(req, new ModelLoader.DataLoadingListener() {
+            @Override
+            public void onLoaded(String data) {
+                AlertDialog.Builder alb = new AlertDialog.Builder(rootView.getContext());
+                alb.setTitle(getString(R.string.alert));
+                alb.setCancelable(true);
+                alb.setIcon(android.R.drawable.ic_dialog_alert);
+                alb.setPositiveButton(getString(R.string.closeBtn), null);
+                try {
+                    Log.d("remove", "removedialog");
+                    JSONObject js = new JSONObject(data);
+                    Log.d("json", js.get("result").toString());
+                    if (js.get("result").toString().equals("0")) {
+                        alb.setMessage(getString(R.string.send_email_secc));
+                    } else if (js.get("result").toString().equals("1")) {
+                        alb.setMessage(getString(R.string.system_error));
+                    } else if (js.get("result").toString().equals("2")) {
+                        alb.setMessage(getString(R.string.system_error));
+                    } else if (js.get("result").toString().equals("3")) {
+                        alb.setMessage(getString(R.string.email_not_found));
+                    } else if (js.get("result").toString().equals("4")) {
+                        alb.setMessage(getString(R.string.system_error));
                     }
+                } catch (JSONException e) {
+                    alb.setMessage(getString(R.string.system_error));
                 }
-                String ret = builder.toString();
-                Log.d("ret", ret);
-                return ret;
-            } catch (Exception e) {
-                Log.d("do in background", "error do in background");
-                return null;
+                alb.show();
             }
-        }
 
-        @Override
-        public void onPostExecute(String s) {
-            removeDialog(1);
-            AlertDialog.Builder alb = new AlertDialog.Builder(rootView.getContext());
-            alb.setTitle(getString(R.string.alert));
-            alb.setCancelable(true);
-            alb.setIcon(android.R.drawable.ic_dialog_alert);
-            alb.setPositiveButton(getString(R.string.closeBtn), null);
-            try {
-                Log.d("remove", "removedialog");
-                JSONObject js = new JSONObject(s);
-                Log.d("json", js.get("result").toString());
-                if (js.get("result").toString().equals("0")) {
-                    alb.setMessage(getString(R.string.send_email_secc));
-                } else if (js.get("result").toString().equals("1")) {
-                    alb.setMessage(getString(R.string.system_error));
-                } else if (js.get("result").toString().equals("2")) {
-                    alb.setMessage(getString(R.string.system_error));
-                } else if (js.get("result").toString().equals("3")) {
-                    alb.setMessage(getString(R.string.email_not_found));
-                } else if (js.get("result").toString().equals("4")) {
-                    alb.setMessage(getString(R.string.system_error));
-                }
-            } catch (JSONException e) {
-                alb.setMessage(getString(R.string.system_error));
+            @Override
+            public void onFailed(String message) {
+
             }
-            alb.show();
-        }
+        });
     }
 
     @Override
@@ -231,7 +189,7 @@ public class LoginActivity extends Activity {
 
     private void logAct() {
         if (user.getText().length() >= 6 && pass.getText().length() >= 6)
-            new ckeckLogin().execute(user.getText().toString(), pass.getText().toString());
+            login(user.getText().toString(), pass.getText().toString());
         else showDialog(3);
     }
 
@@ -249,76 +207,54 @@ public class LoginActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
-    public class ckeckLogin extends AsyncTask<String, Void, JSONObject> {
-
-        @Override
-        protected void onPreExecute() {
-            showDialog(0);
-
-        }
-
-        @Override
-        protected JSONObject doInBackground(String... params) {
-            StringBuilder builder = new StringBuilder();
-            try {
-                String data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8") + "&";
-                data += URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(params[1], "UTF-8");
-                URL url = new URL(new WebServiceConfig().getHost("checkUser.php"));
-                URLConnection conn = url.openConnection();
-                conn.setDoOutput(true);
-                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(data);
-                out.flush();
-                BufferedReader mread = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String line;
-                while ((line = mread.readLine()) != null) {
-                    builder.append(line);
-                }
-                Log.d("Login", builder.toString());
-                if (builder.toString() != "") {
-                    return new JSONObject(builder.toString());
-                } else {
-                    Log.d("Login", "Login error");
-                    return new JSONObject("");
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+    public void login(String userName, String password) {
+        LoginReq req = new LoginReq();
+        req.username = userName;
+        req.password = password;
+        showDialog(0);
+        new LoginLoader(req, new ModelLoader.DataLoadingListener() {
+            @Override
+            public void onLoaded(final String data) {
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        removeDialog(0);
+                        JSONObject jsonObject;
+                        try {
+                            jsonObject = new JSONObject(data);
+                            DatabaseManager db = new DatabaseManager(getBaseContext());
+                            db.getWritableDatabase();
+                            if (jsonObject.getBoolean("stulog")) {
+                                db.saveSession(jsonObject.getString("username"), jsonObject.getString("id"), jsonObject.getString("email"));
+                            } else {
+                                if (db.existUser()) db.clearUser();
+                                showDialog(2);
+                            }
+                            if (db.existUser()) {
+                                Intent intent = new Intent(getBaseContext(), MainPage.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
             }
-        }
 
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            removeDialog(0);
-            try {
-                DatabaseManager db = new DatabaseManager(getBaseContext());
-                db.getWritableDatabase();
-                if (jsonObject.getBoolean("stulog")) {
-                    db.saveSession(jsonObject.getString("username"), jsonObject.getString("id"), jsonObject.getString("email"));
-                } else {
-                    if (db.existUser()) db.clearUser();
-                    showDialog(2);
-                }
-                if (db.existUser()) {
-                    Intent intent = new Intent(getBaseContext(), MainPage.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            @Override
+            public void onFailed(String message) {
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        removeDialog(0);
+                    }
+                });
             }
-        }
+        });
     }
-
 }
