@@ -2,6 +2,7 @@ package com.example.hackme.emining.ui.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -70,6 +71,7 @@ public class DataManagerFragment extends Fragment {
     private HashMap<String, Object> hm;
     private ArrayList as;
     private AlertDialog dlg;
+    private ProgressDialog progressDialog;
 
     public static DataManagerFragment newInstance() {
         return new DataManagerFragment();
@@ -455,6 +457,7 @@ public class DataManagerFragment extends Fragment {
     }
 
     public void updateTable(File file) {
+        progressDialog = ProgressDialog.show(getContext(), getString(R.string.processing), getString(R.string.please_wait), false, true);
         new UpdateDataLoader(file, dbms.getLoginId(), updateHm.get("table_name").toString(), new ModelLoader.DataLoadingListener() {
             @Override
             public void onLoaded(String data) {
@@ -462,10 +465,12 @@ public class DataManagerFragment extends Fragment {
                     @Override
                     public void run() {
                         try {
+                            progressDialog.dismiss();
                             loadData();
                         } catch (Exception e) {
                             simpleDialog(getString(R.string.alert), getString(R.string.update_failed), getResources().getDrawable(android.R.drawable.ic_dialog_alert));
                             e.printStackTrace();
+                            progressDialog.dismiss();
                         }
                     }
                 });
@@ -473,12 +478,18 @@ public class DataManagerFragment extends Fragment {
 
             @Override
             public void onFailed(String message) {
-
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                    }
+                });
             }
         });
     }
 
     public void uploadNewFile(File file) {
+        progressDialog = ProgressDialog.show(getContext(), getString(R.string.processing), getString(R.string.please_wait), false, true);
         new AddDataLoader(file, dbms.getLoginId(), new ModelLoader.DataLoadingListener() {
             @Override
             public void onLoaded(final String data) {
@@ -486,6 +497,7 @@ public class DataManagerFragment extends Fragment {
                     @Override
                     public void run() {
                         try {
+                            progressDialog.dismiss();
                             JSONObject jso = new JSONObject(data);
                             if (jso.getInt("StatusID") == 1) {
                                 loadData();
@@ -494,6 +506,7 @@ public class DataManagerFragment extends Fragment {
                                 simpleDialog(getString(R.string.alert), getString(R.string.upload_failed), ContextCompat.getDrawable(getActivity(), android.R.drawable.ic_dialog_alert));
                             }
                         } catch (Exception e) {
+                            progressDialog.dismiss();
                             e.printStackTrace();
                             simpleDialog(getString(R.string.alert), getString(R.string.upload_failed), ContextCompat.getDrawable(getActivity(), android.R.drawable.ic_dialog_alert));
                         }
@@ -506,6 +519,7 @@ public class DataManagerFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        progressDialog.dismiss();
                         simpleDialog(getString(R.string.alert), getString(R.string.upload_failed), ContextCompat.getDrawable(getActivity(), android.R.drawable.ic_dialog_alert));
                     }
                 });
