@@ -14,7 +14,7 @@ public class AnalysysLoader {
         String json = new Gson().toJson(req);
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("AnalysysLoader", json);
+            jsonObject.put("AnalysysLoaderReq", json);
         } catch (JSONException e) {
             e.printStackTrace();
         }

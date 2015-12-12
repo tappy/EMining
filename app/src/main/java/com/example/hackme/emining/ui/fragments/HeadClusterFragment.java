@@ -18,6 +18,7 @@ import com.example.hackme.emining.model.GetClusterModelLoader;
 import com.example.hackme.emining.model.ModelLoader;
 
 import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 public class HeadClusterFragment extends Fragment {
@@ -65,47 +66,52 @@ public class HeadClusterFragment extends Fragment {
 
         new GetClusterModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    JSONArray js = new JSONArray(data);
-                    if (req.param.equals("head")) {
-                        webData = "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head>" +
-                                "<body><table widht='100%' border=0>";
-                        for (int i = 0; i < js.length(); i++) {
-                            webData += "<tr>";
-                            webData += "<td>" + js.getString(i) + "</td>";
-                            webData += "</tr>";
-                        }
-                    } else {
-                        webData += "<tr>";
-                        webData += "<table widht='100%' border=0>";
-                        for (int i = 0; i < js.length(); i++) {
-                            if (i == 0) {
-                                webData += "<thead><tr>";
-                                webData += "<th align='center' colspan='3' >" + js.getString(i) + "</th>";
-                                webData += "</tr>" +
-                                        "<tr>" +
-                                        "<th>กลุ่ม</th>" +
-                                        "<th>จำนวนข้อมูล</th>" +
-                                        "<th>เปอร์เซ็นต์</th>" +
-                                        "</tr></thead><tbody>";
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONArray js = new JSONArray(data);
+                            if (req.param.equals("head")) {
+                                webData = "<!Doctype html><head>" + new WebViewManager(rootView).getCSS() + "</head>" +
+                                        "<body><table widht='100%' border=0>";
+                                for (int i = 0; i < js.length(); i++) {
+                                    webData += "<tr>";
+                                    webData += "<td>" + js.getString(i) + "</td>";
+                                    webData += "</tr>";
+                                }
                             } else {
                                 webData += "<tr>";
-                                ArrayList<String> marr = getClusterHeadTable(js.getString(i).toString());
-                                webData += "<td align='center' >" + marr.get(0) + "</td>";
-                                webData += "<td align='center' >" + marr.get(1) + "</td>";
-                                webData += "<td align='center' >" + marr.get(2).replaceAll("[(-)]+", "") + "</td>";
-                                webData += "</tr>";
+                                webData += "<table widht='100%' border=0>";
+                                for (int i = 0; i < js.length(); i++) {
+                                    if (i == 0) {
+                                        webData += "<thead><tr>";
+                                        webData += "<th align='center' colspan='3' >" + js.getString(i) + "</th>";
+                                        webData += "</tr>" +
+                                                "<tr>" +
+                                                "<th>กลุ่ม</th>" +
+                                                "<th>จำนวนข้อมูล</th>" +
+                                                "<th>เปอร์เซ็นต์</th>" +
+                                                "</tr></thead><tbody>";
+                                    } else {
+                                        webData += "<tr>";
+                                        ArrayList<String> marr = getClusterHeadTable(js.getString(i));
+                                        webData += "<td align='center' >" + marr.get(0) + "</td>";
+                                        webData += "<td align='center' >" + marr.get(1) + "</td>";
+                                        webData += "<td align='center' >" + marr.get(2).replaceAll("[(-)]+", "") + "</td>";
+                                        webData += "</tr>";
+                                    }
+                                }
+                                webData += "</tbody></tr>";
+                                webData += "</table>";
+                                webData += "</table></body></html>";
+                                cluster_head_web.loadData(webData, "text/html; charset=UTF-8", null);
                             }
+                        } catch (Exception e) {
+                            Log.d("webview err", e.toString());
                         }
-                        webData += "</tbody></tr>";
-                        webData += "</table>";
-                        webData += "</table></body></html>";
-                        cluster_head_web.loadData(webData, "text/html; charset=UTF-8", null);
                     }
-                } catch (Exception e) {
-                    Log.d("webview err", e.toString());
-                }
+                });
             }
 
             @Override
@@ -115,7 +121,7 @@ public class HeadClusterFragment extends Fragment {
         });
     }
 
-    private ArrayList getClusterHeadTable(String val) {
+    private ArrayList<String> getClusterHeadTable(String val) {
 
         ArrayList<String> arr = new ArrayList<>();
         String vx[] = val.split(" ");

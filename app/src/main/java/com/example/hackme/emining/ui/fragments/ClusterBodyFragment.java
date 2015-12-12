@@ -64,33 +64,38 @@ public class ClusterBodyFragment extends Fragment {
     public void getClustermodel(GetClusterModelReq req) {
         new GetClusterModelLoader(req, new ModelLoader.DataLoadingListener() {
             @Override
-            public void onLoaded(String data) {
-                try {
-                    if (param.equals("body")) {
+            public void onLoaded(final String data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (param.equals("body")) {
 
-                        listView = (ListView) rootView.findViewById(R.id.listView);
-                        JSONArray js = new JSONArray(data);
+                                listView = (ListView) rootView.findViewById(R.id.listView);
+                                JSONArray js = new JSONArray(data);
 
-                        HashMap<String, Object> hm;
-                        ArrayList arrayList = new ArrayList();
+                                HashMap<String, Object> hm;
+                                ArrayList arrayList = new ArrayList();
 
-                        for (int i = 0; i < js.length(); i++) {
-                            JSONArray js2 = new JSONArray(js.getString(i));
-                            hm = new HashMap<>();
-                            hm.put("v1", js2.getString(0));
-                            hm.put("v2", js2.getString(col));
-                            arrayList.add(hm);
+                                for (int i = 0; i < js.length(); i++) {
+                                    JSONArray js2 = new JSONArray(js.getString(i));
+                                    hm = new HashMap<>();
+                                    hm.put("v1", js2.getString(0));
+                                    hm.put("v2", js2.getString(col));
+                                    arrayList.add(hm);
 
+                                }
+                                String[] from = new String[]{"v1", "v2"};
+                                int[] to = new int[]{R.id.textView3, R.id.textView4};
+                                int id = R.layout.cluster_list;
+                                SimpleAdapter simpleAdapter = new SimpleAdapter(rootView.getContext(), arrayList, id, from, to);
+                                listView.setAdapter(simpleAdapter);
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
                         }
-                        String[] from = new String[]{"v1", "v2"};
-                        int[] to = new int[]{R.id.textView3, R.id.textView4};
-                        int id = R.layout.cluster_list;
-                        SimpleAdapter simpleAdapter = new SimpleAdapter(rootView.getContext(), arrayList, id, from, to);
-                        listView.setAdapter(simpleAdapter);
                     }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                });
             }
 
             @Override

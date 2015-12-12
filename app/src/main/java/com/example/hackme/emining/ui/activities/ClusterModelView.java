@@ -48,7 +48,7 @@ public class ClusterModelView extends AppCompatActivity {
 
             tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
             ClusterPagerAdapter clusterPagerAdapter = new ClusterPagerAdapter(getSupportFragmentManager());
-            pager = (ViewPager) findViewById(R.id.aprioripager);
+            pager = (ViewPager) findViewById(R.id.cluster_pager);
             pager.setAdapter(clusterPagerAdapter);
             pager.setOffscreenPageLimit(5);
             tabs.setViewPager(pager);
