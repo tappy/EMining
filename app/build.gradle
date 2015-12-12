@@ -7,7 +7,7 @@ android {
         applicationId "com.example.hackme.emining"
         minSdkVersion 16
         targetSdkVersion 17
-        versionCode 1
+        versionCode 2
         versionName "1.0"
     }
 
