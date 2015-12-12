@@ -13,8 +13,8 @@ public class UpdateDataLoader {
         RequestBody multiPath = new MultipartBuilder()
                 .type(MultipartBuilder.FORM)
                 .addFormDataPart("filUpload", file.getName(), RequestBody.create(ModelLoader.FILE, file))
-                .addFormDataPart("body", userId)
-                .addFormDataPart("table_name", tableName).build();
-        new ModelLoader().uploadFile("loadFileName.php", multiPath, listener);
+                .addFormDataPart("userID", userId)
+                .addFormDataPart("tableName", tableName).build();
+        new ModelLoader().uploadFile("updateTable.php", multiPath, listener);
     }
 }

@@ -453,7 +453,17 @@ public class DataManagerFragment extends Fragment {
         new UpdateDataLoader(file, dbms.getLoginId(), updateHm.get("table_name").toString(), new ModelLoader.DataLoadingListener() {
             @Override
             public void onLoaded(String data) {
-
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            loadData();
+                        } catch (Exception e) {
+                            simpleDialog(getString(R.string.alert), getString(R.string.update_failed), getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
 
             @Override
