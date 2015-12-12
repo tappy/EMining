@@ -27,6 +27,7 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 
 import com.example.hackme.emining.R;
+import com.example.hackme.emining.customView.SimpleDialog;
 import com.example.hackme.emining.entities.AnalysysLoaderReq;
 import com.example.hackme.emining.model.AnalysysLoader;
 import com.example.hackme.emining.model.ModelLoader;
@@ -317,6 +318,7 @@ public class ViewModelFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        progressDialog.dismiss();
                         try {
                             JSONObject jsonObject1 = new JSONObject(data);
                             if (jsonObject1.getInt("model") == 1) {
@@ -391,11 +393,16 @@ public class ViewModelFragment extends Fragment {
             }
 
             @Override
-            public void onFailed(String message) {
-
+            public void onFailed(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        new SimpleDialog(getContext(), getString(R.string.app_name), message);
+                    }
+                });
             }
         });
-        progressDialog.dismiss();
     }
 
     public void loadDropDownTable() {
