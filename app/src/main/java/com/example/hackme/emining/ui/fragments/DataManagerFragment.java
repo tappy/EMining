@@ -337,22 +337,27 @@ public class DataManagerFragment extends Fragment {
                             req.userid = new DatabaseManager(rootView.getContext()).getLoginId();
                             new DeleteTableLoader(req, new ModelLoader.DataLoadingListener() {
                                 @Override
-                                public void onLoaded(String data) {
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(data);
-                                        if (jsonObject.getInt("status") == 1) {
-                                            as.remove(position);
-                                            listA.notifyDataSetChanged();
-                                            loadData();
-                                            if (jsonObject.getInt("drop") == 1) {
-                                                dlg.dismiss();
+                                public void onLoaded(final String data) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(data);
+                                                if (jsonObject.getInt("status") == 1) {
+                                                    as.remove(position);
+                                                    listA.notifyDataSetChanged();
+                                                    loadData();
+                                                    if (jsonObject.getInt("drop") == 1) {
+                                                        dlg.dismiss();
+                                                    }
+                                                } else {
+                                                    showDialog(getString(R.string.missing), getString(R.string.del_failed), getString(R.string.closeBtn));
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
                                             }
-                                        } else {
-                                            showDialog(getString(R.string.missing), getString(R.string.del_failed), getString(R.string.closeBtn));
                                         }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                    });
                                 }
 
                                 @Override
