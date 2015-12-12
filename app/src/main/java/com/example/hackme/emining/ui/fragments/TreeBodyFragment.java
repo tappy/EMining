@@ -7,17 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import com.example.hackme.emining.R;
 import com.example.hackme.emining.Helpers.WebViewManager;
-import com.example.hackme.emining.entities.SummayLoaderReq;
 import com.example.hackme.emining.entities.TreeModelReq;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.model.GetTreeModelLoader;
 import com.example.hackme.emining.model.ModelLoader;
-import com.example.hackme.emining.model.SummaryLoader;
 
 import org.json.JSONArray;
 
@@ -28,6 +26,7 @@ public class TreeBodyFragment extends Fragment {
     private WebView webView;
     public static String line = "";
     private WebViewManager web_m;
+    private ProgressBar progressBar;
 
     public static TreeBodyFragment newInstance() {
         return new TreeBodyFragment();
@@ -47,6 +46,8 @@ public class TreeBodyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.fragment_tree_body_frag, container, false);
+        progressBar = (ProgressBar) rootview.findViewById(R.id.process);
+        progressBar.setVisibility(View.VISIBLE);
         webView = (WebView) rootview.findViewById(R.id.tree_body_frag);
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
@@ -66,6 +67,7 @@ public class TreeBodyFragment extends Fragment {
                     @Override
                     public void run() {
                         try {
+                            progressBar.setVisibility(View.INVISIBLE);
                             JSONArray js = new JSONArray(data);
                             line += web_m.htmlHead(web_m.getCSS());
                             ArrayList<String> as = getTreeVal(js);

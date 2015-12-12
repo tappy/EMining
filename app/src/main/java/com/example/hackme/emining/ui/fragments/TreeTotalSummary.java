@@ -8,16 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.example.hackme.emining.R;
 import com.example.hackme.emining.Helpers.WebViewManager;
-import com.example.hackme.emining.entities.SummayLoaderReq;
 import com.example.hackme.emining.entities.TreeModelReq;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.model.GetTreeModelLoader;
 import com.example.hackme.emining.model.ModelLoader;
-import com.example.hackme.emining.model.SummaryLoader;
 
 import org.json.JSONArray;
 

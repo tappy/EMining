@@ -1,7 +1,6 @@
 package com.example.hackme.emining.ui.fragments;
 
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,15 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import com.example.hackme.emining.R;
 import com.example.hackme.emining.Helpers.WebViewManager;
-import com.example.hackme.emining.entities.SummayLoaderReq;
 import com.example.hackme.emining.entities.TreeModelReq;
 import com.example.hackme.emining.model.DatabaseManager;
 import com.example.hackme.emining.model.GetTreeModelLoader;
 import com.example.hackme.emining.model.ModelLoader;
-import com.example.hackme.emining.model.SummaryLoader;
 
 import org.json.JSONArray;
 
@@ -30,7 +28,7 @@ public class TreeSummaryFragment extends Fragment {
     private View rootview;
     private WebView webView;
     private String webData;
-    private ProgressDialog tree_progressDialog;
+    private ProgressBar progressBar;
 
     public static TreeSummaryFragment newInstance() {
         TreeSummaryFragment fragment = new TreeSummaryFragment();
@@ -51,6 +49,8 @@ public class TreeSummaryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.fragment_tree_summary_frag, container, false);
+        progressBar = (ProgressBar) rootview.findViewById(R.id.process);
+        progressBar.setVisibility(View.VISIBLE);
         webView = (WebView) rootview.findViewById(R.id.tree_summary_web_wiew);
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
@@ -69,6 +69,7 @@ public class TreeSummaryFragment extends Fragment {
                     @Override
                     public void run() {
                         try {
+                            progressBar.setVisibility(View.INVISIBLE);
                             JSONArray js = new JSONArray(data);
                             webData = "<!Doctype html><head>" + new WebViewManager().getCSS() + "</head>" +
                                     "<body><table widht='100%' border=0>";
@@ -105,7 +106,6 @@ public class TreeSummaryFragment extends Fragment {
                             }
                             webData += "</table></body></html>";
                             webView.loadData(webData, "text/html; charset=UTF-8", null);
-                            tree_progressDialog.dismiss();
                         } catch (Exception e) {
                             Log.d("webview err", e.toString());
                         }
