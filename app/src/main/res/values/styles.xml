@@ -8,17 +8,12 @@
         <item name="colorPrimaryDark">@color/baseColorPlus</item>
     </style>
 
-    <style name="FilePickerTheme" parent="NNF_BaseTheme">
+    <style name="FilePickerTheme" parent="NNF_BaseTheme.Light">
         <!-- Set these to match your theme -->
         <item name="colorPrimary">@color/baseColor</item>
         <item name="colorPrimaryDark">@color/baseColorPlus</item>
         <item name="colorAccent">@color/baseColorMin</item>
-
-        <!-- Need to set this also to style create folder dialog -->
-        <item name="alertDialogTheme">@style/FilePickerAlertDialogTheme</item>
-
-        <!-- If you want to set a specific toolbar theme, do it here -->
-        <!-- <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
+        <!--<item name="nnf_toolbarTheme">@style/Theme.AppCompat.Light.Dialog</item>-->
     </style>
 
     <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
@@ -26,4 +21,5 @@
         <item name="colorPrimaryDark">@color/baseColorPlus</item>
         <item name="colorAccent">@color/baseColorMin</item>
     </style>
+
 </resources>
