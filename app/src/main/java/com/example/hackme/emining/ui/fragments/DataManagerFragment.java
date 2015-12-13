@@ -1,15 +1,19 @@
 package com.example.hackme.emining.ui.fragments;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -41,6 +45,7 @@ import com.example.hackme.emining.model.LoadFilesName;
 import com.example.hackme.emining.model.ModelLoader;
 import com.example.hackme.emining.model.TablesLoader;
 import com.example.hackme.emining.model.UpdateDataLoader;
+import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +77,7 @@ public class DataManagerFragment extends Fragment {
     private ArrayList as;
     private AlertDialog dlg;
     private ProgressDialog progressDialog;
+    private int FILE_CODE = 11;
 
     public static DataManagerFragment newInstance() {
         return new DataManagerFragment();
@@ -107,7 +113,7 @@ public class DataManagerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 stuUpdate = false;
-                filePickDlg(getString(R.string.select_file_upload));
+                filePickDlg();
             }
         });
         AlertDialog.Builder aBuilder = showDialog(getString(R.string.network), getString(R.string.check_network), getString(R.string.closeBtn));
@@ -132,11 +138,13 @@ public class DataManagerFragment extends Fragment {
                 .show();
     }
 
-    private void filePickDlg(String titleText) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, titleText), 0);
+    private void filePickDlg() {
+        Intent i = new Intent(getContext(), FilePickerActivity.class);
+        i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+        i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+        i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+        i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
+        startActivityForResult(i, FILE_CODE);
     }
 
     private AlertDialog.Builder showDialog(String... set) {
@@ -232,7 +240,7 @@ public class DataManagerFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 stuUpdate = true;
-                                filePickDlg(getString(R.string.select_file_update));
+                                filePickDlg();
                             }
                         });
                         dlg = listAction.create();
@@ -412,47 +420,44 @@ public class DataManagerFragment extends Fragment {
         });
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            switch (requestCode) {
-                case FILE_SELECT_CODE:
-                    if (resultCode == Activity.RESULT_OK) {
-                        Uri uri = data.getData();
-                        File file = new File(getRealPathFromURI(uri));
-                        String[] ftype = file.getName().split("\\.");
-                        String typ = ftype[ftype.length - 1];
+        if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
+            try {
+                File file = new File(data.getData().getPath());
+                String[] ftype = file.getName().split("\\.");
+                String typ = ftype[ftype.length - 1];
 
-                        if (typ.equals("csv") || typ.equals("arff")) {
-                            if (stuUpdate) {
-                                updateTable(file);
-                            } else {
-                                uploadNewFile(file);
-                            }
-                        } else {
-                            AlertDialog.Builder a = new AlertDialog.Builder(rootView.getContext());
-                            a.setTitle(getString(R.string.alert));
-                            a.setIcon(android.R.drawable.ic_dialog_alert);
-                            a.setMessage(getString(R.string.fileType_notSupport));
-                            a.setCancelable(true);
-                            a.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (stuUpdate) {
-                                        filePickDlg(getString(R.string.select_file_update));
-                                    } else {
-                                        filePickDlg(getString(R.string.select_file_upload));
-                                    }
-                                }
-                            });
-                            a.show();
-                        }
+                if (typ.equals("csv") || typ.equals("arff")) {
+                    if (stuUpdate) {
+                        updateTable(file);
+                    } else {
+                        uploadNewFile(file);
                     }
+                } else {
+                    AlertDialog.Builder a = new AlertDialog.Builder(rootView.getContext());
+                    a.setTitle(getString(R.string.alert));
+                    a.setIcon(android.R.drawable.ic_dialog_alert);
+                    a.setMessage(getString(R.string.fileType_notSupport));
+                    a.setCancelable(true);
+                    a.setPositiveButton(getString(R.string.closeBtn), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (stuUpdate) {
+                                filePickDlg();
+                            } else {
+                                filePickDlg();
+                            }
+                        }
+                    });
+                    a.show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                simpleDialog(getString(R.string.alert), getString(R.string.upload_failed) + "\n กรุณาเลือกไหล์ด้วยด้วยแอพจัดการไฟล์", ContextCompat.getDrawable(getActivity(), android.R.drawable.ic_dialog_alert));
+                Log.e("Error upload File", e.toString());
             }
-        } catch (Exception e) {
-            simpleDialog(getString(R.string.alert), getString(R.string.upload_failed) + "\n กรุณาเลือกไหล์ด้วยด้วยแอพจัดการไฟล์", ContextCompat.getDrawable(getActivity(), android.R.drawable.ic_dialog_alert));
-            Log.e("Error upload File", e.toString());
         }
     }
 
